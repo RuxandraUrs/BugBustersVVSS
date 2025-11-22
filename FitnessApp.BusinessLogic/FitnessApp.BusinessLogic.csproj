@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{3112707D-0980-4C79-8245-FC5F14B4482C}</ProjectGuid>
+    <ProjectGuid>{0B88F8D0-4C98-4E1E-90B7-3A657A0555D3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>FitnessApp.BusinessLoic</RootNamespace>

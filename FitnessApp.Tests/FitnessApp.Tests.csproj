@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FitnessApp.BusinessLoic\FitnessApp.BusinessLoic.csproj" />
+    <ProjectReference Include="..\FitnessApp.BusinessLogic\FitnessApp.BusinessLogic.csproj" />
     <ProjectReference Include="..\FitnessApp.DataAccess\FitnessApp.DataAccess.csproj" />
     <ProjectReference Include="..\FitnessApp.Models\FitnessApp.Models.csproj" />
     <ProjectReference Include="..\FitnessApp.WpfUI\FitnessApp.WpfUI.csproj" />

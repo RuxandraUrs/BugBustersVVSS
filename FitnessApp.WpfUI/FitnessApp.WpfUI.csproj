@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FitnessApp.BusinessLoic\FitnessApp.BusinessLoic.csproj" />
+    <ProjectReference Include="..\FitnessApp.BusinessLogic\FitnessApp.BusinessLogic.csproj" />
     <ProjectReference Include="..\FitnessApp.Models\FitnessApp.Models.csproj" />
   </ItemGroup>
 

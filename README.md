@@ -1,5 +1,4 @@
-# BugBustersVVSS
-**VVSS project - Fitness Planner in C#  **
+# BugBustersVVSS - Fitness Planner in C#  
 
 **FitApp Tracker** is a virtual assistant designed to help users achieve their fitness goals by monitoring calorie intake and physical activity. The application validates user data, automatically calculates key health indicators (like BMI and BMR), and integrates with an external API to retrieve real-time nutritional information.
 

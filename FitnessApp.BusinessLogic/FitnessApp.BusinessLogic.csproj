@@ -190,6 +190,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ExternalApi\NutritionApiClient.cs" />
+    <Compile Include="Helpers\FileLogger.cs" />
     <Compile Include="Interfaces\IAuthenticationService.cs" />
     <Compile Include="Interfaces\ITrackerService.cs" />
     <Compile Include="NutritionApiClient.cs" />

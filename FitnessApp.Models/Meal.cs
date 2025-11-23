@@ -11,18 +11,26 @@ namespace FitnessApp.Models
     {
         public int Id { get; set; }
         public int LogId { get; set; }
-        public string FoodName { get; set; }
-        public double Calories { get; set; }
-        public double QuantityGrams { get; set; }
+        public string FoodName { get; private set; }
+        public double Calories { get; private set; }
+        public double QuantityGrams { get; private  set; }
         public MealType Type { get; set; }
 
         public Meal() { }
 
-        public Meal(string name, double calories, double grams, MealType type)
+        public Meal(string name, double calories, double quantity,  MealType type)
         {
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentNullException("Food Name is mandatory!");
+
+            if (calories < 0)
+                throw new ArgumentException("Calories cannot be negative!");
+
+            if (quantity <= 0)
+                throw new ArgumentException("Quantity must be positive!");
             FoodName = name;
             Calories = calories;
-            QuantityGrams = grams;
+            QuantityGrams = quantity;
             Type = type;
         }
 

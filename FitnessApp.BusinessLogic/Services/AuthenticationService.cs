@@ -1,6 +1,6 @@
 ﻿using System;
+using FitnessApp.BusinessLogic.Interfaces;
 using FitnessApp.BusinessLogic.Validators;
-using FitnessApp.BusinessLoic.Interfaces;
 using FitnessApp.DataAccess.Interfaces;
 using FitnessApp.Models;
 

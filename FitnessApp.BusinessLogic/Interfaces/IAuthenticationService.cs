@@ -1,5 +1,5 @@
 ﻿using FitnessApp.Models;
-namespace FitnessApp.BusinessLoic.Interfaces
+namespace FitnessApp.BusinessLogic.Interfaces
 {
     public interface IAuthenticationService
     {

@@ -189,6 +189,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExternalApi\ApiResponseModels.cs" />
     <Compile Include="ExternalApi\NutritionApiClient.cs" />
     <Compile Include="Interfaces\IAuthenticationService.cs" />
     <Compile Include="Interfaces\ITrackerService.cs" />

@@ -8,6 +8,6 @@ namespace FitnessApp.DataAccess.Interfaces
         User GetUserByUsername(string username);
 
         // need for registering a new user
-        void AddUser(User user);
+        void AddUser(User user); //should add a new parameter: hashedPassword
     }
 }

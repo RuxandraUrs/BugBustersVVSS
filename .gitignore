@@ -416,3 +416,5 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+/FitnessApp.BusinessLogic/FitnessApp.BusinessLogic.csproj
+/FitnessApp.DataAccess/FitnessApp.DataAccess.csproj

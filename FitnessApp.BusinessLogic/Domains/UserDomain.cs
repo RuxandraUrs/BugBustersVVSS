@@ -8,7 +8,7 @@ using FitnessApp.DataAccess.Interfaces;
 using FitnessApp.DataAccess.Repositories;
 using FitnessApp.Models;
 
-namespace FitnessApp.BusinessLoic.Domains
+namespace FitnessApp.BusinessLogic.Domains
 {
     public class UserDomain
     {

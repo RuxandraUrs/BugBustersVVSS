@@ -2,7 +2,7 @@
 using FitnessApp.Models;
 using FitnessApp.Models.Enums;
 using System.IO;
-using FitnessApp.BusinessLoic.Helpers;
+using FitnessApp.BusinessLogic.Helpers;
 namespace FitnessApp.Tests.UnitTests
 {
     [TestFixture]

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FitnessApp.BusinessLoic.Helpers
+namespace FitnessApp.BusinessLogic.Helpers
 {
     public static class FileLogger
     {

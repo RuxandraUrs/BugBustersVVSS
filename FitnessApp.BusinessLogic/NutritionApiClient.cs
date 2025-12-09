@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FitnessApp.BusinessLoic
+namespace FitnessApp.BusinessLogic
 {
     internal class NutritionApiClient
     {

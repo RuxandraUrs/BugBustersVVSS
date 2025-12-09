@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FitnessApp.DataAccess.Interfaces;
 
-namespace FitnessApp.BusinessLoic.Domains
+namespace FitnessApp.BusinessLogic.Domains
 {
     public class ActivityDomain
     {

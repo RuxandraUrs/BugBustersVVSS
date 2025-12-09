@@ -1,6 +1,6 @@
 ﻿using System;
 using FitnessApp.BusinessLogic.Interfaces;
-using FitnessApp.BusinessLoic.Domains;
+using FitnessApp.BusinessLogic.Domains;
 
 namespace FitnessApp.BusinessLogic.Services
 {

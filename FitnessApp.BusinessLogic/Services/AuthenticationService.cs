@@ -1,6 +1,7 @@
 ﻿using System;
 using FitnessApp.BusinessLogic.Interfaces;
 using FitnessApp.BusinessLogic.Validators;
+using FitnessApp.BusinessLoic.Domains;
 using FitnessApp.DataAccess.Interfaces;
 using FitnessApp.Models;
 
@@ -8,42 +9,37 @@ namespace FitnessApp.BusinessLogic.Services
 {
     public class AuthenticationService : IAuthenticationService
     {
-        private readonly IUserRepository _userRepository; 
-        private readonly UserValidator _validator;
+        private readonly UserDomain _userDomain;
 
         // for now we will mock this dependency bcs we don't have a real DB 
-        public AuthenticationService(IUserRepository userRepository)
+        public AuthenticationService(UserDomain userDomain)
         {
-            _userRepository = userRepository;
-            _validator = new UserValidator();
+            _userDomain = userDomain;
         }
 
         public void RegisterUser(User user)
         {
-            if (!_validator.Validate(user, out string errorMessage))
+            if (user == null)
             {
-                throw new ArgumentException(errorMessage);
+                throw new ArgumentNullException(nameof(user), "User cannot be null.");
             }
 
-            var existingUser = _userRepository.GetUserByUsername(user.Username);
-            if (existingUser != null)
-            {
-                throw new InvalidOperationException("Username already exists.");
-            }
-
-            _userRepository.AddUser(user);
+            _userDomain.RegisterUser(user);
         }
 
         public User Login(string username, string password)
         {
-            var user = _userRepository.GetUserByUsername(username);
-
-            if (user == null || user.PasswordHash != password)
+            if (string.IsNullOrWhiteSpace(username))
             {
-                return null;
+                throw new ArgumentException("Username cannot be empty.");
             }
 
-            return user;
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                throw new ArgumentException("Password cannot be empty.");
+            }
+
+            return _userDomain.Login(username, password);
         }
     }
 }

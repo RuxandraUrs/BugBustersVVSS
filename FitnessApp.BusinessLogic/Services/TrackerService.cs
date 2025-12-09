@@ -1,37 +1,39 @@
-﻿using FitnessApp.BusinessLogic.Interfaces;
-using System;
+﻿using System;
+using FitnessApp.BusinessLogic.Interfaces;
+using FitnessApp.BusinessLoic.Domains;
 
 namespace FitnessApp.BusinessLogic.Services
 {
     public class TrackerService : ITrackerService
     {
-        public int CalculateRemainingCalories(int dailyGoal, int consumed, int burned)
-        {
-            return (dailyGoal + burned) - consumed;
-        }
-        public bool WouldExceedBudget(int dailyGoal, int burnedToday,int currentTotal, int newFoodCalories)
-        {
-            int limit = dailyGoal + burnedToday; 
+        private UserDomain _userDomain { get; set; }
 
-            return (currentTotal + newFoodCalories) > limit;
+        public TrackerService(UserDomain userDomain)
+        {
+            _userDomain = userDomain;
         }
 
-        public string GetDailyProgressStatus(int dailyGoal, int consumed)
+        public int CalculateRemainingCalories(string username, int consumed, int burned)
         {
-            double percentage = (double)consumed / dailyGoal * 100;
+            if (username == null)
+                throw new ArgumentNullException(nameof(username), "Username cannot be null.");
 
-            if (percentage >= 100)
-            {
-                return "Warning: You have exceeded your daily calorie limit!";
-            }
-            else if (percentage >= 85)
-            {
-                return "Careful: You are close to your daily limit.";
-            }
-            else
-            {
-                return $"You are doing great! {dailyGoal - consumed} calories remaining.";
-            }
+            return _userDomain.CalculateRemainingCalories(username, consumed, burned);
+        }
+        public bool WouldExceedBudget(string username, int burnedToday,int currentTotal, int newFoodCalories)
+        {
+            if (username == null)
+                throw new ArgumentNullException(nameof(username), "Username cannot be null.");
+
+            return _userDomain.WouldExceedBudget(username, burnedToday, currentTotal, newFoodCalories);
+        }
+
+        public string GetDailyProgressStatus(string username, int consumed)
+        {
+            if (username == null)
+                throw new ArgumentNullException(nameof(username), "Username cannot be null.");
+
+            return _userDomain.GetDailyProgressStatus(username, consumed);
         }
     }
 }

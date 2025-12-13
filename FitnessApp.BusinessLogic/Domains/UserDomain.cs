@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FitnessApp.BusinessLogic.Helpers;
 using FitnessApp.BusinessLogic.Validators;
 using FitnessApp.DataAccess.Interfaces;
 using FitnessApp.DataAccess.Repositories;
@@ -24,113 +25,214 @@ namespace FitnessApp.BusinessLogic.Domains
         #region Authentication
         public void RegisterUser(User user)
         {
-            if (!_validator.Validate(user, out string errorMessage))
+            try
             {
-                throw new ArgumentException(errorMessage);
-            }
+                if (!_validator.Validate(user, out string errorMessage))
+                {
+                    FileLogger.LogError($"User validation failed: {errorMessage}");
+                    throw new ArgumentException(errorMessage);
+                }
 
-            var existingUser = userRepository.GetUserByUsername(user.Username);
-            if (existingUser != null)
+                var existingUser = userRepository.GetUserByUsername(user.Username);
+                if (existingUser != null)
+                {
+                    FileLogger.LogError($"Registration failed: Username '{user.Username}' already exists");
+                    throw new InvalidOperationException("Username already exists.");
+                }
+
+                userRepository.AddUser(user);
+                FileLogger.LogError($"User registered successfully: {user.Username}");
+            }
+            catch (Exception ex)
             {
-                throw new InvalidOperationException("Username already exists.");
+                FileLogger.LogError($"Error during user registration for username: {user?.Username}", ex);
+                throw;
             }
-
-            userRepository.AddUser(user);
         }
 
         public User Login(string username, string password)
         {
-            var user = userRepository.GetUserByUsername(username);
-
-            if (user == null || user.PasswordHash != password)
+            try
             {
-                return null;
-            }
+                var user = userRepository.GetUserByUsername(username);
 
-            return user;
+                if (user == null || user.PasswordHash != password)
+                {
+                    FileLogger.LogError($"Login failed for username: {username}");
+                    return null;
+                }
+
+                FileLogger.LogError($"User logged in successfully: {username}");
+                return user;
+            }
+            catch (Exception ex)
+            {
+                FileLogger.LogError($"Error during login for username: {username}", ex);
+                throw;
+            }
         }
         #endregion
 
         #region Fitness Calculator
         public double CalculateBMI(string username)
         {
-            var user = userRepository.GetUserByUsername(username);
-            if (user == null) return 0;
+            try
+            {
+                var user = userRepository.GetUserByUsername(username);
+                if (user == null)
+                {
+                    FileLogger.LogError($"BMI calculation failed: User '{username}' not found");
+                    return 0;
+                }
 
-            double weightKg = user.WeightKg;
-            double heightCm = user.HeightCm;
-            if (heightCm <= 0 || weightKg <= 0) return 0;
+                double weightKg = user.WeightKg;
+                double heightCm = user.HeightCm;
 
-            double heightM = heightCm / 100.0;
-            double bmi = weightKg / (heightM * heightM);
+                if (heightCm <= 0 || weightKg <= 0)
+                {
+                    FileLogger.LogError($"BMI calculation failed: Invalid height or weight for user '{username}'");
+                    return 0;
+                }
 
-            return Math.Round(bmi, 2);
+                double heightM = heightCm / 100.0;
+                double bmi = weightKg / (heightM * heightM);
+
+                FileLogger.LogError($"BMI calculated for user '{username}': {Math.Round(bmi, 2)}");
+                return Math.Round(bmi, 2);
+            }
+            catch (Exception ex)
+            {
+                FileLogger.LogError($"Error calculating BMI for user: {username}", ex);
+                throw;
+            }
         }
 
         public double CalculateBMR(string username)
         {
-            var user = userRepository.GetUserByUsername(username);
-            if (user == null) return 0;
-
-            double weightKg = user.WeightKg;
-            double heightCm = user.HeightCm;
-            int age = DateTime.Now.Year - user.BirthDate.Year;
-            string gender = user.Gender;
-
-            if (weightKg <= 0 || heightCm <= 0 || age <= 0) return 0;
-
-            double bmr = (10 * weightKg) + (6.25 * heightCm) - (5 * age);
-
-            if (gender != null && gender.Equals("Male", StringComparison.OrdinalIgnoreCase))
+            try
             {
-                bmr += 5;
-            }
-            else
-            {
-                bmr -= 161;
-            }
+                var user = userRepository.GetUserByUsername(username);
+                if (user == null)
+                {
+                    FileLogger.LogError($"BMR calculation failed: User '{username}' not found");
+                    return 0;
+                }
 
-            return Math.Round(bmr, 0);
+                double weightKg = user.WeightKg;
+                double heightCm = user.HeightCm;
+                int age = DateTime.Now.Year - user.BirthDate.Year;
+                string gender = user.Gender;
+
+                if (weightKg <= 0 || heightCm <= 0 || age <= 0)
+                {
+                    FileLogger.LogError($"BMR calculation failed: Invalid data for user '{username}'");
+                    return 0;
+                }
+
+                double bmr = (10 * weightKg) + (6.25 * heightCm) - (5 * age);
+
+                if (gender != null && gender.Equals("Male", StringComparison.OrdinalIgnoreCase))
+                {
+                    bmr += 5;
+                }
+                else
+                {
+                    bmr -= 161;
+                }
+
+                FileLogger.LogError($"BMR calculated for user '{username}': {Math.Round(bmr, 0)}");
+                return Math.Round(bmr, 0);
+            }
+            catch (Exception ex)
+            {
+                FileLogger.LogError($"Error calculating BMR for user: {username}", ex);
+                throw;
+            }
         }
         #endregion
 
         #region Tracker
         public int CalculateRemainingCalories(string username, int consumed, int burned)
         {
-            var user = userRepository.GetUserByUsername(username);
-            if (user == null) throw new ArgumentException("User not found.");
+            try
+            {
+                var user = userRepository.GetUserByUsername(username);
+                if (user == null)
+                {
+                    FileLogger.LogError($"Calculate remaining calories failed: User '{username}' not found");
+                    throw new ArgumentException("User not found.");
+                }
 
-            return (user.DailyCalorieGoal + burned) - consumed;
+                int remaining = (user.DailyCalorieGoal + burned) - consumed;
+                FileLogger.LogError($"Remaining calories calculated for '{username}': {remaining}");
+                return remaining;
+            }
+            catch (Exception ex)
+            {
+                FileLogger.LogError($"Error calculating remaining calories for user: {username}", ex);
+                throw;
+            }
         }
         public bool WouldExceedBudget(string username, int burnedToday, int currentTotal, int newFoodCalories)
         {
-            var user = userRepository.GetUserByUsername(username);
-            if (user == null) throw new ArgumentException("User not found.");
-            int dailyGoal = user.DailyCalorieGoal;
-            int limit = dailyGoal + burnedToday;
+            try
+            {
+                var user = userRepository.GetUserByUsername(username);
+                if (user == null)
+                {
+                    FileLogger.LogError($"Budget check failed: User '{username}' not found");
+                    throw new ArgumentException("User not found.");
+                }
 
-            return (currentTotal + newFoodCalories) > limit;
+                int dailyGoal = user.DailyCalorieGoal;
+                int limit = dailyGoal + burnedToday;
+                bool wouldExceed = (currentTotal + newFoodCalories) > limit;
+
+                FileLogger.LogError($"Budget check for '{username}': Would exceed = {wouldExceed}");
+                return wouldExceed;
+            }
+            catch (Exception ex)
+            {
+                FileLogger.LogError($"Error checking budget for user: {username}", ex);
+                throw;
+            }
         }
 
         public string GetDailyProgressStatus(string username, int consumed)
         {
-            var user = userRepository.GetUserByUsername(username);
-            if (user == null) throw new ArgumentException("User not found.");
-            int dailyGoal = user.DailyCalorieGoal;
+            try
+            {
+                var user = userRepository.GetUserByUsername(username);
+                if (user == null)
+                {
+                    FileLogger.LogError($"Progress status failed: User '{username}' not found");
+                    throw new ArgumentException("User not found.");
+                }
 
-            double percentage = (double)consumed / dailyGoal * 100;
+                int dailyGoal = user.DailyCalorieGoal;
+                double percentage = (double)consumed / dailyGoal * 100;
 
-            if (percentage >= 100)
-            {
-                return "Warning: You have exceeded your daily calorie limit!";
+                string status;
+                if (percentage >= 100)
+                {
+                    status = "Warning: You have exceeded your daily calorie limit!";
+                }
+                else if (percentage >= 85)
+                {
+                    status = "Careful: You are close to your daily limit.";
+                }
+                else
+                {
+                    status = $"You are doing great! {dailyGoal - consumed} calories remaining.";
+                }
+
+                FileLogger.LogError($"Progress status for '{username}': {status}");
+                return status;
             }
-            else if (percentage >= 85)
+            catch (Exception ex)
             {
-                return "Careful: You are close to your daily limit.";
-            }
-            else
-            {
-                return $"You are doing great! {dailyGoal - consumed} calories remaining.";
+                FileLogger.LogError($"Error getting daily progress for user: {username}", ex);
+                throw;
             }
         }
         #endregion

@@ -26,10 +26,10 @@ namespace FitnessApp.DataAccess.Repositories
             {
                 Id = reader.GetInt32(reader.GetOrdinal("Id")),
                 LogId = reader.GetInt32(reader.GetOrdinal("LogId")),
-                //FoodName = reader.GetString(reader.GetOrdinal("FoodName")), //private setter
+                FoodName = reader.GetString(reader.GetOrdinal("FoodName")), 
 
-                //Calories = reader.GetDouble(reader.GetOrdinal("TotalCalories")), //private setter
-                //QuantityGrams = reader.GetDouble(reader.GetOrdinal("QuantityGrams")), //private setter
+                Calories = reader.GetDouble(reader.GetOrdinal("TotalCalories")), 
+                QuantityGrams = reader.GetDouble(reader.GetOrdinal("QuantityGrams")), 
 
                 Type = (MealType)Enum.Parse(typeof(MealType), reader.GetString(reader.GetOrdinal("MealType")))
             };
@@ -44,8 +44,8 @@ namespace FitnessApp.DataAccess.Repositories
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
 
-                    //cmd.Parameters.AddWithValue("@UserId", userId);
-                    //cmd.Parameters.AddWithValue("@LogDate", logDate.Date); 
+                    cmd.Parameters.AddWithValue("@UserId", userId);
+                    cmd.Parameters.AddWithValue("@LogDate", logDate.Date); 
                     cmd.Parameters.AddWithValue("@FoodName", meal.FoodName);
                     cmd.Parameters.AddWithValue("@QuantityGrams", meal.QuantityGrams);
                     cmd.Parameters.AddWithValue("@TotalCalories", meal.Calories);
@@ -65,7 +65,7 @@ namespace FitnessApp.DataAccess.Repositories
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
 
-                    //cmd.Parameters.AddWithValue("@UserId", userId);
+                    cmd.Parameters.AddWithValue("@UserId", userId);
                     cmd.Parameters.AddWithValue("@LogDate", logDate.Date);
                     cmd.Parameters.AddWithValue("@ActivityName", workout.ActivityName);
                     cmd.Parameters.AddWithValue("@DurationMinutes", workout.DurationMinutes);

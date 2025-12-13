@@ -13,6 +13,7 @@ namespace FitnessApp.DataAccess.Interfaces
 
         void AddWorkout(Workout workout, int userId, DateTime logDate);
 
+
         //List<DailyLog> GetHistory(int userId, DateTime startDate, DateTime endDate); //we do not have a Model for DailyLog
     }
 }

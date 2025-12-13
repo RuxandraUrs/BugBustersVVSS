@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DailyLog.cs" />
     <Compile Include="Enums\AllEnums.cs" />
     <Compile Include="Meal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

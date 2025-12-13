@@ -10,9 +10,9 @@ namespace FitnessApp.Models
     {
         public int Id { get; set; }
         public int LogId { get; set; }
-        public string ActivityName { get; private set; }
-        public int DurationMinutes { get; private set; }
-        public int CaloriesBurned { get; private set; }
+        public string ActivityName { get; set; }
+        public int DurationMinutes { get; set; }
+        public int CaloriesBurned { get;  set; }
 
 
         Workout() { }

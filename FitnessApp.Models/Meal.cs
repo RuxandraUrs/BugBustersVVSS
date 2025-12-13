@@ -11,9 +11,9 @@ namespace FitnessApp.Models
     {
         public int Id { get; set; }
         public int LogId { get; set; }
-        public string FoodName { get; private set; }
-        public double Calories { get; private set; }
-        public double QuantityGrams { get; private  set; }
+        public string FoodName { get; set; }
+        public double Calories { get; set; }
+        public double QuantityGrams { get; set; }
         public MealType Type { get; set; }
 
         public Meal() { }

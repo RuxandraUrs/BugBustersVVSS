@@ -175,7 +175,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include=".env" />
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>

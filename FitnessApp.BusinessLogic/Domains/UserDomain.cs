@@ -16,6 +16,15 @@ namespace FitnessApp.BusinessLogic.Domains
         private IUserRepository userRepository { get; set; }
         private readonly UserValidator _validator;
 
+        public void AddUser(User user)
+        {
+            userRepository.AddUser(user);
+        }
+
+        public User GetUserByUsername(string username)
+        {
+            return userRepository.GetUserByUsername(username);
+        }
         public UserDomain(IUserRepository userRepository)
         {
             this.userRepository = userRepository;

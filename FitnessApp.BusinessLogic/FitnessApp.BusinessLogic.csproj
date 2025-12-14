@@ -197,7 +197,7 @@
     <Compile Include="Interfaces\IActivityRepository.cs" />
     <Compile Include="Interfaces\IAuthenticationService.cs" />
     <Compile Include="Interfaces\ITrackerService.cs" />
-    <Compile Include="Interfaces\IUerDomain.cs" />
+    <Compile Include="Interfaces\IUserDomain.cs" />
     <Compile Include="Interfaces\IUserRepository.cs" />
     <Compile Include="NutritionApiClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

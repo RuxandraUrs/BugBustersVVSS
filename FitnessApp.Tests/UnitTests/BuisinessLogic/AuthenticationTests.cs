@@ -1,59 +1,50 @@
-﻿//using NUnit.Framework;
-//using Moq;
-//using FitnessApp.BusinessLogic.Services;
-//using FitnessApp.DataAccess.Interfaces;
-//using FitnessApp.Models;
-//using System;
+﻿using NUnit.Framework;
+using Moq;
+using FitnessApp.BusinessLogic.Services;
+using FitnessApp.BusinessLogic.Domains;
+using FitnessApp.Models;
+using System;
 
-//namespace FitnessApp.Tests.UnitTests.BuisinessLogic
-//{
-//    [TestFixture]
-//    public class AuthenticationTests
-//    {
-//        private Mock<IUserRepository> _mockRepository;
-//        private AuthenticationService _authService;
+namespace FitnessApp.Tests.UnitTests.BuisinessLogic
+{
+    [TestFixture]
+    public class AuthenticationTests
+    {
+        private Mock<IUserDomain> _mockUserDomain;
+        private AuthenticationService _authService;
 
-//        [SetUp]
-//        public void Setup()
-//        {
-//            _mockRepository = new Mock<IUserRepository>();
-//            _authService = new AuthenticationService(_mockRepository.Object);
-//        }
+        [SetUp]
+        public void Setup()
+        {
+            _mockUserDomain = new Mock<IUserDomain>();
+            _authService = new AuthenticationService(_mockUserDomain.Object);
+        }
 
-//        [Test]
-//        public void RegisterUser_ValidUser_CallsAddUserInRepository()
-//        {
-            
-//            var newUser = new User("ValidUser", "test@email.com", 70, 175, 2000);
-//            newUser.PasswordHash = "safePssword1234"; 
-//            newUser.BirthDate = new DateTime(2000, 1, 1);
+        //verifies that registering a new, valid user calls the AddUser method in the domain layer.
+        [Test]
+        public void RegisterUser_ValidUser_CallsAddUserInRepository()
+        {
 
-            
-//            _mockRepository.Setup(repo => repo.GetUserByUsername("ValidUser"))
-//                           .Returns((User)null);
+            var newUser = new User("ValidUser", "test@email.com", 70, 175, 2000);
+            newUser.PasswordHash = "safePssword1234";
+            newUser.BirthDate = new DateTime(2000, 1, 1);
 
-//            _authService.RegisterUser(newUser);
+            _authService.RegisterUser(newUser);
 
-//            _mockRepository.Verify(repo => repo.AddUser(newUser), Times.Once);
-//        }
+            _mockUserDomain.Verify(d => d.RegisterUser(newUser), Times.Once);
+        }
+        //ensures that attempting to register an existing username throws an InvalidOperationException.
+        [Test]
+        public void RegisterUser_DomainThrowsException_ServiceBubblesException()
+        {
+            var newUser = new User("DuplicateUser", "test@email.com", 70, 175, 2000);
 
-//        [Test]
-//        public void RegisterUser_ExistingUser_ThrowsException()
-//        {
-//            var existingUser = new User("OldUser", "old@email.com", 80, 180, 2000);
-//            existingUser.PasswordHash = "pass123";
+            _mockUserDomain.Setup(d => d.RegisterUser(It.IsAny<User>()))
+                           .Throws(new InvalidOperationException("Username already exists."));
 
-//            _mockRepository.Setup(repo => repo.GetUserByUsername("OldUser"))
-//                           .Returns(existingUser);
+            var ex = Assert.Throws<InvalidOperationException>(() => _authService.RegisterUser(newUser));
 
-//            var newUserDuplicate = new User("OldUser", "new@email.com", 90, 180, 2000);
-
-//            newUserDuplicate.PasswordHash = "NewPassoword4321";
-//            newUserDuplicate.BirthDate = new DateTime(2000, 1, 1);
-
-//            var ex = Assert.Throws<InvalidOperationException>(() => _authService.RegisterUser(newUserDuplicate));
-
-//            Assert.That(ex.Message, Is.EqualTo("Username already exists."));
-//        }
-//    }
-//}
+            Assert.That(ex.Message, Is.EqualTo("Username already exists."));
+        }
+    }
+}

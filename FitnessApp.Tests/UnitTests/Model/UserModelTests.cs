@@ -3,7 +3,7 @@ using FitnessApp.Models;
 using System;
 
 
-namespace FitnessApp.Tests.UnitTests
+namespace FitnessApp.Tests.UnitTests.Model
 {
     [TestFixture]
     public class UserModelTests

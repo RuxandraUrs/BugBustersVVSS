@@ -26,14 +26,12 @@ namespace FitnessApp.DataAccess.Repositories
         {
             return new Meal
             {
-                Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                LogId = reader.GetInt32(reader.GetOrdinal("LogId")),
-                FoodName = reader.GetString(reader.GetOrdinal("FoodName")), 
-
-                Calories = reader.GetDouble(reader.GetOrdinal("TotalCalories")), 
-                QuantityGrams = reader.GetDouble(reader.GetOrdinal("QuantityGrams")), 
-
-                Type = (MealType)Enum.Parse(typeof(MealType), reader.GetString(reader.GetOrdinal("MealType")))
+                Id = (int)reader["Id"],
+                LogId = (int)reader["LogId"],
+                FoodName = reader["FoodName"].ToString(),
+                Calories = Convert.ToDouble(reader["TotalCalories"]),
+                QuantityGrams = Convert.ToDouble(reader["QuantityGrams"]),
+                Type = (MealType)Enum.Parse(typeof(MealType), reader["MealType"].ToString())
             };
         }
 
@@ -41,10 +39,11 @@ namespace FitnessApp.DataAccess.Repositories
         {
             return new Workout
             {
-                Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                ActivityName = reader.GetString(reader.GetOrdinal("ActivityName")),
-                DurationMinutes = (int)reader.GetDouble(reader.GetOrdinal("DurationMinutes")),
-                CaloriesBurned = (int)reader.GetDouble(reader.GetOrdinal("CaloriesBurned")) // Cast la int daca in DB e float/decimal
+                Id = (int)reader["Id"],
+                LogId = (int)reader["LogId"],
+                ActivityName = reader["ActivityName"].ToString(),
+                DurationMinutes = (int)Convert.ToDouble(reader["DurationMinutes"]),
+                CaloriesBurned = Convert.ToInt32(reader["CaloriesBurned"])
             };
         }
         public void AddMeal(Meal meal, int userId, DateTime logDate)
@@ -106,6 +105,63 @@ namespace FitnessApp.DataAccess.Repositories
             }
         }
 
+        public Meal GetMealById(int mealId)
+        {
+            try
+            {
+                using (var conn = _dbConnection.GetConnection())
+                {
+                    conn.Open();
+                    using (var cmd = new SqlCommand("SELECT * FROM Meals WHERE Id = @Id", conn))
+                    {
+                        cmd.Parameters.AddWithValue("@Id", mealId);
+
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                return MapMealFromReader(reader);
+                            }
+                        }
+                    }
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                FileLogger.LogError($"Error at finding the meal with ID: {mealId}", ex);
+                throw;
+            }
+        }
+
+        public Workout GetWorkoutById(int workoutId)
+        {
+            try
+            {
+                using (var conn = _dbConnection.GetConnection())
+                {
+                    conn.Open();
+                    using (var cmd = new SqlCommand("SELECT * FROM Workouts WHERE Id = @Id", conn))
+                    {
+                        cmd.Parameters.AddWithValue("@Id", workoutId);
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                return MapWorkoutFromReader(reader);
+                            }
+                        }
+                    }
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                FileLogger.LogError($"Error at finding the workout with ID: {workoutId}", ex);
+                throw;
+            }
+        }
+
         public DailyLog GetDailyLog(int userId, DateTime date)
         {
             var dailyLog = new DailyLog(userId, date);
@@ -116,10 +172,10 @@ namespace FitnessApp.DataAccess.Repositories
                 {
                     conn.Open();
 
-                    string sqlMeals = "SELECT * FROM Meals WHERE UserId = @UserId AND CAST(LogDate AS DATE) = @LogDate"; //To Do: stored procedure
-
-                    using (var cmd = new SqlCommand(sqlMeals, conn))
+                    using (var cmd = new SqlCommand("sp_GetMealsByDate", conn))
                     {
+                        cmd.CommandType = CommandType.StoredProcedure;
+
                         cmd.Parameters.AddWithValue("@UserId", userId);
                         cmd.Parameters.AddWithValue("@LogDate", date.Date);
 
@@ -132,10 +188,10 @@ namespace FitnessApp.DataAccess.Repositories
                         }
                     }
 
-                    string sqlWorkouts = "SELECT * FROM Workouts WHERE UserId = @UserId AND CAST(LogDate AS DATE) = @LogDate"; //To Do: stored procedure
-
-                    using (var cmd = new SqlCommand(sqlWorkouts, conn))
+                    using (var cmd = new SqlCommand("sp_GetWorkoutsByDate", conn))
                     {
+                        cmd.CommandType = CommandType.StoredProcedure; 
+
                         cmd.Parameters.AddWithValue("@UserId", userId);
                         cmd.Parameters.AddWithValue("@LogDate", date.Date);
 
@@ -158,53 +214,146 @@ namespace FitnessApp.DataAccess.Repositories
             }
         }
 
-        //TO DO: GetHistory function!
-        //public List<DailyLog> GetHistory(int userId, DateTime startDate, DateTime endDate)
-        //{
-        //    var historyList = new List<DailyHistoryItem>(); //TO DO: DailyHistoryItem
+        public List<DailyHistory> GetHistory(int userId, DateTime startDate, DateTime endDate)
+        {
+            var historyList = new List<DailyHistory>();
 
-        //    try
-        //    {
-        //        using (var conn = _dbConnection.GetConnection())
-        //        {
-        //            conn.Open();
-                  
-        //            using (var cmd = new SqlCommand("sp_GetHistory", conn))
-        //            {
-        //                cmd.CommandType = CommandType.StoredProcedure;
+            try
+            {
+                using (var conn = _dbConnection.GetConnection())
+                {
+                    conn.Open();
 
-                       
-        //                cmd.Parameters.AddWithValue("@UserId", userId);
-        //                cmd.Parameters.AddWithValue("@StartDate", startDate);
-        //                cmd.Parameters.AddWithValue("@EndDate", endDate);
+                    using (var cmd = new SqlCommand("sp_GetHistory", conn))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
 
-        //                using (var reader = cmd.ExecuteReader())
-        //                {
-        //                    while (reader.Read())
-        //                    {
-        //                        var item = new DailyHistoryItem
-        //                        {
-        //                            LogDate = reader.GetDateTime(reader.GetOrdinal("LogDate")),
+                        cmd.Parameters.AddWithValue("@UserId", userId);
+                        cmd.Parameters.AddWithValue("@StartDate", startDate);
+                        cmd.Parameters.AddWithValue("@EndDate", endDate);
 
-        //                            TotalCaloriesIn = reader.GetDouble(reader.GetOrdinal("TotalCaloriesIn")),
-        //                            TotalCaloriesBurned = reader.GetDouble(reader.GetOrdinal("TotalCaloriesBurned")),
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                var item = new DailyHistory
+                                {
+                                    LogDate = reader.GetDateTime(reader.GetOrdinal("LogDate")),
 
-        //                            CalorieDifference = reader.GetDouble(reader.GetOrdinal("CalorieDifference"))
-        //                        };
+                                    TotalCaloriesIn = reader.GetDouble(reader.GetOrdinal("TotalCaloriesIn")),
+                                    TotalCaloriesBurned = reader.GetDouble(reader.GetOrdinal("TotalCaloriesBurned")),
 
-        //                        historyList.Add(item);
-        //                    }
-        //                }
-        //            }
-        //        }
+                                    CalorieDifference = reader.GetDouble(reader.GetOrdinal("CalorieDifference"))
+                                };
 
-        //        return historyList;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        FileLogger.LogError($"Error getting history for user {userId} between {startDate} and {endDate}", ex);
-        //        throw;
-        //    }
-        //}
+                                historyList.Add(item);
+                            }
+                        }
+                    }
+                }
+                return historyList;
+            }
+            catch (Exception ex)
+            {
+                FileLogger.LogError($"Error getting history for user {userId} between {startDate} and {endDate}", ex);
+                throw;
+            }
+        }
+       
+        public void UpdateMeal(Meal meal)
+        {
+            try
+            {
+                using (var conn = _dbConnection.GetConnection())
+                {
+                    conn.Open();
+                    
+                    using (var cmd = new SqlCommand("sp_UpdateMeal", conn))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.AddWithValue("@Id", meal.Id);
+                        cmd.Parameters.AddWithValue("@FoodName", meal.FoodName);
+                        cmd.Parameters.AddWithValue("@Quantity", meal.QuantityGrams);
+                        cmd.Parameters.AddWithValue("@Calories", meal.Calories);
+                        cmd.Parameters.AddWithValue("@MealType", meal.Type.ToString());
+
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                FileLogger.LogError($"Error at updating the meal with ID: {meal.Id}", ex);
+                throw;
+            }
+        }
+        public void UpdateWorkout(Workout workout)
+        {
+            try
+            {
+                using (var conn = _dbConnection.GetConnection())
+                {
+                    conn.Open();
+
+                    using (var cmd = new SqlCommand("sp_UpdateWorkout", conn))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.AddWithValue("@Id", workout.Id);
+                        cmd.Parameters.AddWithValue("@ActivityName", workout.ActivityName);
+                        cmd.Parameters.AddWithValue("@DurationMinutes", workout.DurationMinutes);
+                        cmd.Parameters.AddWithValue("@CaloriesBurned", workout.CaloriesBurned);
+
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                FileLogger.LogError($"Error at updating workout with ID: {workout.Id}", ex);
+                throw;
+            }
+        }
+        public void DeleteMeal(int mealId)
+        {
+            try
+            {
+                using (var conn = _dbConnection.GetConnection())
+                {
+                    conn.Open();
+                    using (var cmd = new SqlCommand("DELETE FROM Meals WHERE Id = @Id", conn))
+                    {
+                        cmd.Parameters.AddWithValue("@Id", mealId);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                FileLogger.LogError($"Error at deleting meal with ID: {mealId}", ex);
+                throw;
+            }
+        }
+        public void DeleteWorkout(int workoutId)
+        {
+            try
+            {
+                using (var conn = _dbConnection.GetConnection())
+                {
+                    conn.Open();
+                    using (var cmd = new SqlCommand("DELETE FROM Workouts WHERE Id = @Id", conn))
+                    {
+                        cmd.Parameters.AddWithValue("@Id", workoutId);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                FileLogger.LogError($"Error at deleting workout with ID: {workoutId}", ex);
+                throw;
+            }
+        }
     }
 }

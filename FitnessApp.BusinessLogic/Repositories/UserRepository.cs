@@ -26,11 +26,11 @@ namespace FitnessApp.DataAccess.Repositories
             return new User
             {
                 Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                //Username = reader.GetString(reader.GetOrdinal("Username")), //setter private !
+                Username = reader.GetString(reader.GetOrdinal("Username")), //setter private !
                 PasswordHash = reader.GetString(reader.GetOrdinal("PasswordHash")),
-                //Email = reader.GetString(reader.GetOrdinal("Email")), //setter private
+                Email = reader.GetString(reader.GetOrdinal("Email")), //setter private
                 HeightCm = reader.GetDouble(reader.GetOrdinal("HeightCm")),
-                //WeightKg = reader.GetDouble(reader.GetOrdinal("WeightKg")), //setter private
+                WeightKg = reader.GetDouble(reader.GetOrdinal("WeightKg")), //setter private
                 DailyCalorieGoal = reader.GetInt32(reader.GetOrdinal("DailyCalorieGoal"))
             };
         }

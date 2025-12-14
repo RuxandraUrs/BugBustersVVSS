@@ -12,6 +12,8 @@ namespace FitnessApp.DataAccess.Interfaces
         void AddMeal(Meal meal, int userId, DateTime logDate);
 
         void AddWorkout(Workout workout, int userId, DateTime logDate);
-       // List<DailyLog> GetHistory(int userId, DateTime startDate, DateTime endDate);
+
+        DailyLog GetDailyLog(int userId, DateTime date);
+        List<DailyLog> GetHistory(int userId, DateTime startDate, DateTime endDate); 
     }
 }

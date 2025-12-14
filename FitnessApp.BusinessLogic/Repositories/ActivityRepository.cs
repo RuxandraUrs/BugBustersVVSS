@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -36,6 +37,16 @@ namespace FitnessApp.DataAccess.Repositories
             };
         }
 
+        private Workout MapWorkoutFromReader(SqlDataReader reader)
+        {
+            return new Workout
+            {
+                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                ActivityName = reader.GetString(reader.GetOrdinal("ActivityName")),
+                DurationMinutes = (int)reader.GetDouble(reader.GetOrdinal("DurationMinutes")),
+                CaloriesBurned = (int)reader.GetDouble(reader.GetOrdinal("CaloriesBurned")) // Cast la int daca in DB e float/decimal
+            };
+        }
         public void AddMeal(Meal meal, int userId, DateTime logDate)
         {
             try
@@ -95,7 +106,105 @@ namespace FitnessApp.DataAccess.Repositories
             }
         }
 
+        public DailyLog GetDailyLog(int userId, DateTime date)
+        {
+            var dailyLog = new DailyLog(userId, date);
 
-        //TO DO: GetHistory function for DailyLog!
+            try
+            {
+                using (var conn = _dbConnection.GetConnection())
+                {
+                    conn.Open();
+
+                    string sqlMeals = "SELECT * FROM Meals WHERE UserId = @UserId AND CAST(LogDate AS DATE) = @LogDate"; //To Do: stored procedure
+
+                    using (var cmd = new SqlCommand(sqlMeals, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@UserId", userId);
+                        cmd.Parameters.AddWithValue("@LogDate", date.Date);
+
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                dailyLog.Meals.Add(MapMealFromReader(reader));
+                            }
+                        }
+                    }
+
+                    string sqlWorkouts = "SELECT * FROM Workouts WHERE UserId = @UserId AND CAST(LogDate AS DATE) = @LogDate"; //To Do: stored procedure
+
+                    using (var cmd = new SqlCommand(sqlWorkouts, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@UserId", userId);
+                        cmd.Parameters.AddWithValue("@LogDate", date.Date);
+
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                dailyLog.Workouts.Add(MapWorkoutFromReader(reader));
+                            }
+                        }
+                    }
+                }
+                dailyLog.CalculateTotals();
+                return dailyLog;
+            }
+            catch (Exception ex)
+            {
+                FileLogger.LogError($"Error retrieving DailyLog for user {userId} on {date}", ex);
+                throw;
+            }
+        }
+
+        //TO DO: GetHistory function!
+        //public List<DailyLog> GetHistory(int userId, DateTime startDate, DateTime endDate)
+        //{
+        //    var historyList = new List<DailyHistoryItem>(); //TO DO: DailyHistoryItem
+
+        //    try
+        //    {
+        //        using (var conn = _dbConnection.GetConnection())
+        //        {
+        //            conn.Open();
+                  
+        //            using (var cmd = new SqlCommand("sp_GetHistory", conn))
+        //            {
+        //                cmd.CommandType = CommandType.StoredProcedure;
+
+                       
+        //                cmd.Parameters.AddWithValue("@UserId", userId);
+        //                cmd.Parameters.AddWithValue("@StartDate", startDate);
+        //                cmd.Parameters.AddWithValue("@EndDate", endDate);
+
+        //                using (var reader = cmd.ExecuteReader())
+        //                {
+        //                    while (reader.Read())
+        //                    {
+        //                        var item = new DailyHistoryItem
+        //                        {
+        //                            LogDate = reader.GetDateTime(reader.GetOrdinal("LogDate")),
+
+        //                            TotalCaloriesIn = reader.GetDouble(reader.GetOrdinal("TotalCaloriesIn")),
+        //                            TotalCaloriesBurned = reader.GetDouble(reader.GetOrdinal("TotalCaloriesBurned")),
+
+        //                            CalorieDifference = reader.GetDouble(reader.GetOrdinal("CalorieDifference"))
+        //                        };
+
+        //                        historyList.Add(item);
+        //                    }
+        //                }
+        //            }
+        //        }
+
+        //        return historyList;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        FileLogger.LogError($"Error getting history for user {userId} between {startDate} and {endDate}", ex);
+        //        throw;
+        //    }
+        //}
     }
 }

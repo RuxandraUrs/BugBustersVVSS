@@ -11,7 +11,7 @@ using FitnessApp.Models;
 
 namespace FitnessApp.BusinessLogic.Domains
 {
-    public class UserDomain
+    public class UserDomain : IUserDomain
     {
         private IUserRepository userRepository { get; set; }
         private readonly UserValidator _validator;

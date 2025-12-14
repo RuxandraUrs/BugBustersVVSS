@@ -14,27 +14,35 @@ namespace FitnessApp.BusinessLogic.ExternalApi
         private const string BaseUrl = "https://api.api-ninjas.com/v1/nutrition?query=";
         private readonly HttpClient _httpClient;
 
-        public NutritionApiClient()
+        public NutritionApiClient(HttpClient httpClient = null)
         {
             try
             {
                 Env.Load();
                 _apiKey = Environment.GetEnvironmentVariable("NINJA_API_KEY");
 
+                if (string.IsNullOrEmpty(_apiKey) && httpClient != null)
+                {
+                    _apiKey = "TEST_API_KEY";
+                }
+
                 if (string.IsNullOrEmpty(_apiKey))
                 {
-                    FileLogger.LogError("NINJA_API_KEY is missing from environment variables"); // ADD THIS
+                    FileLogger.LogError("NINJA_API_KEY is missing from environment variables"); 
                     throw new Exception("API Key missing");
                 }
 
-                _httpClient = new HttpClient();
-                _httpClient.DefaultRequestHeaders.Add("X-Api-Key", _apiKey);
+                _httpClient = httpClient ?? new HttpClient();
+                if (!_httpClient.DefaultRequestHeaders.Contains("X-Api-Key"))
+                {
+                    _httpClient.DefaultRequestHeaders.Add("X-Api-Key", _apiKey);
+                }
 
-                FileLogger.LogError("NutritionApiClient initialized successfully"); // ADD THIS
+                FileLogger.LogError("NutritionApiClient initialized successfully"); 
             }
             catch (Exception ex)
             {
-                FileLogger.LogError("Error initializing NutritionApiClient", ex); // ADD THIS
+                FileLogger.LogError("Error initializing NutritionApiClient", ex); 
                 throw;
             }
         }

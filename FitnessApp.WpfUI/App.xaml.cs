@@ -4,6 +4,7 @@ using DotNetEnv;
 using FitnessApp.DataAccess;
 using FitnessApp.DataAccess.Repositories;
 using FitnessApp.BusinessLogic.Domains;
+using FitnessApp.BusinessLogic.Helpers;
 
 namespace FitnessApp.WpfUI
 {
@@ -14,25 +15,28 @@ namespace FitnessApp.WpfUI
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            Env.Load();
-            string connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
-
-            if (string.IsNullOrEmpty(connectionString))
-            {
-                MessageBox.Show("Couldn’t find DB_CONNECTION_STRING in the .env file!");
-                Shutdown(); 
-                return;
-            }
-
             try
             {
+                Env.Load();
+                string connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+
+                if (string.IsNullOrEmpty(connectionString))
+                {
+                    FileLogger.LogError("DB_CONNECTION_STRING not found in .env file"); 
+                    MessageBox.Show("Couldn't find DB_CONNECTION_STRING in the .env file!");
+                    Shutdown();
+                    return;
+                }
+
                 var dbConnection = new DbConnection(connectionString);
                 var userRepo = new UserRepository(dbConnection);
                 var userDomain = new UserDomain(userRepo);
 
+                FileLogger.LogError("Application started successfully"); 
             }
             catch (Exception ex)
             {
+                FileLogger.LogError("Critical error at application startup", ex); 
                 MessageBox.Show($"Critical error at startup: {ex.Message}");
             }
         }

@@ -5,7 +5,7 @@ namespace FitnessApp.DataAccess.Interfaces
     public interface IUserRepository
     {
         // need for registering a new user
-        void AddUser(User user); //should add a new parameter: hashedPassword
+        void AddUser(User user);
         // need for login step
         User GetUserByUsername(string username);
 

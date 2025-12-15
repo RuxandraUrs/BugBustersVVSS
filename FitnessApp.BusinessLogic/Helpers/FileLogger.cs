@@ -11,11 +11,22 @@ namespace FitnessApp.BusinessLogic.Helpers
 
         static FileLogger()
         {
-           if (!Directory.Exists(LogDirectory))
-           {
-              Directory.CreateDirectory(LogDirectory);
-           }
-           
+            if (!Directory.Exists(LogDirectory))
+            {
+                Directory.CreateDirectory(LogDirectory);
+            }
+
+            try
+            {
+                if (File.Exists(LogFilePath))
+                {
+                    File.Delete(LogFilePath);
+                }
+            }
+            catch
+            {
+                
+            }
         }
 
         public static void LogInfo(string message)

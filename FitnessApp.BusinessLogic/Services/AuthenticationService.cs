@@ -16,24 +16,38 @@ namespace FitnessApp.BusinessLogic.Services
         public AuthenticationService(IUserDomain userDomain)
         {
             _userDomain = userDomain ?? throw new ArgumentNullException(nameof(userDomain));
+            FileLogger.LogInfo("AuthenticationService initialized successfully");
         }
 
         public void RegisterUser(User user)
         {
+            FileLogger.LogInfo($"AuthenticationService: Starting user registration for '{user?.Username}'");
+
             try
             {
                 if (user == null)
                 {
-                    FileLogger.LogError("RegisterUser called with null user");
+                    FileLogger.LogWarning("RegisterUser called with null user object");
                     throw new ArgumentNullException(nameof(user), "User cannot be null.");
                 }
 
                 _userDomain.RegisterUser(user);
-                FileLogger.LogError($"User registration successful via AuthenticationService: {user.Username}");
+
+                FileLogger.LogInfo($"✓ AuthenticationService: User '{user.Username}' registered successfully");
+            }
+            catch (ArgumentException ex)
+            {
+                FileLogger.LogWarning($"AuthenticationService: Registration validation failed for '{user?.Username}': {ex.Message}");
+                throw;
+            }
+            catch (InvalidOperationException ex)
+            {
+                FileLogger.LogWarning($"AuthenticationService: Registration failed for '{user?.Username}': {ex.Message}");
+                throw;
             }
             catch (Exception ex)
             {
-                FileLogger.LogError($"Error in AuthenticationService.RegisterUser for user: {user?.Username}", ex);
+                FileLogger.LogError($"AuthenticationService: Unexpected error during registration for '{user?.Username}'", ex);
                 throw;
             }
         }
@@ -44,13 +58,13 @@ namespace FitnessApp.BusinessLogic.Services
             {
                 if (string.IsNullOrWhiteSpace(username))
                 {
-                    FileLogger.LogError("Login attempt with empty username");
+                    FileLogger.LogWarning("Login attempt with empty or null username");
                     throw new ArgumentException("Username cannot be empty.");
                 }
 
                 if (string.IsNullOrWhiteSpace(password))
                 {
-                    FileLogger.LogError($"Login attempt with empty password for username: {username}");
+                    FileLogger.LogWarning($"Login attempt with empty password for username '{username}'");
                     throw new ArgumentException("Password cannot be empty.");
                 }
 
@@ -58,18 +72,24 @@ namespace FitnessApp.BusinessLogic.Services
 
                 if (result == null)
                 {
-                    FileLogger.LogError($"Login failed in AuthenticationService for username: {username}");
+                
+                    FileLogger.LogWarning($"AuthenticationService: Login failed for username '{username}' (invalid credentials)");
                 }
                 else
                 {
-                    FileLogger.LogError($"Login successful in AuthenticationService for username: {username}");
+                    FileLogger.LogInfo($"AuthenticationService: Login successful for username '{username}'");
                 }
 
                 return result;
             }
+            catch (ArgumentException ex)
+            {
+                FileLogger.LogWarning($"AuthenticationService: Login validation failed for '{username}': {ex.Message}");
+                throw;
+            }
             catch (Exception ex)
             {
-                FileLogger.LogError($"Error in AuthenticationService.Login for username: {username}", ex);
+                FileLogger.LogError($"AuthenticationService: Unexpected error during login for '{username}'", ex);
                 throw;
             }
         }

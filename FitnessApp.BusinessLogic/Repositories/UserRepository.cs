@@ -78,5 +78,40 @@ namespace FitnessApp.DataAccess.Repositories
 
             return null; //user not found
         }
+
+        public void UpdateUserStats(User user)
+        {
+            using (var conn = _dbConnection.GetConnection())
+            {
+                conn.Open();
+                using (var cmd = new SqlCommand("sp_UpdateUserStats", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    cmd.Parameters.AddWithValue("@Id", user.Id);
+                    cmd.Parameters.AddWithValue("@Email", user.Email ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@HeightCm", user.HeightCm);
+                    cmd.Parameters.AddWithValue("@WeightKg", user.WeightKg);
+                    cmd.Parameters.AddWithValue("@DailyCalorieGoal", user.DailyCalorieGoal);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void DeleteUser(int userId)
+        {
+            using (var conn = _dbConnection.GetConnection())
+            {
+                conn.Open();
+                using (var cmd = new SqlCommand("sp_DeleteUser", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Id", userId);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
     }
 }

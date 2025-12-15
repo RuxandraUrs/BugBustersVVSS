@@ -108,7 +108,7 @@ namespace FitnessApp.DataAccess.Repositories
             using (var conn = _dbConnection.GetConnection())
             {
                 conn.Open();
-                using (var cmd = new SqlCommand("sp_UpdateUserStats", conn))
+                using (var cmd = new SqlCommand("sp_UpdateUser", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
 

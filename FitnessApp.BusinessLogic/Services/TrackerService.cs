@@ -7,9 +7,9 @@ namespace FitnessApp.BusinessLogic.Services
 {
     public class TrackerService : ITrackerService
     {
-        private UserDomain _userDomain { get; set; }
+        private IUserDomain _userDomain { get; set; }
 
-        public TrackerService(UserDomain userDomain)
+        public TrackerService(IUserDomain userDomain)
         {
             _userDomain = userDomain ?? throw new ArgumentNullException(nameof(userDomain));
         }

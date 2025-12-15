@@ -7,9 +7,9 @@ namespace FitnessApp.BusinessLogic.Services
 {
     public class FitnessCalculator
     {
-        private UserDomain _userDomain { get; set; }
+        private IUserDomain _userDomain { get; set; }
 
-        public FitnessCalculator(UserDomain userDomain)
+        public FitnessCalculator(IUserDomain userDomain)
         {
             _userDomain = userDomain ?? throw new ArgumentNullException(nameof(userDomain));
         }

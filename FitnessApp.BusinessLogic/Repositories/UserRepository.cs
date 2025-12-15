@@ -1,4 +1,5 @@
-﻿using FitnessApp.DataAccess.Interfaces;
+﻿using FitnessApp.BusinessLogic.Helpers;
+using FitnessApp.DataAccess.Interfaces;
 using FitnessApp.Models;
 using System;
 using System.Collections.Generic;
@@ -37,46 +38,69 @@ namespace FitnessApp.DataAccess.Repositories
 
         public void AddUser(User user) //should add a parameter for passwordhash
         {
-            using (var conn = _dbConnection.GetConnection())
+            try
             {
-                conn.Open();
-                using (var cmd = new SqlCommand("sp_RegisterUser", conn))
+                using (var conn = _dbConnection.GetConnection())
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
+                    conn.Open();
+                    using (var cmd = new SqlCommand("sp_RegisterUser", conn))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
 
-                    cmd.Parameters.AddWithValue("@Username", user.Username);
-                    cmd.Parameters.AddWithValue("@PasswordHash", user.PasswordHash); //it should be the parameter of the function(hashpass)
-                    cmd.Parameters.AddWithValue("@Email", user.Email ?? (object)DBNull.Value); 
-                    cmd.Parameters.AddWithValue("@BirthDate", user.BirthDate);
-                    cmd.Parameters.AddWithValue("@Gender", user.Gender.ToString());
-                    cmd.Parameters.AddWithValue("@HeightCm", user.HeightCm);
-                    cmd.Parameters.AddWithValue("@WeightKg", user.WeightKg);
-                    cmd.Parameters.AddWithValue("@DailyCalorieGoal", user.DailyCalorieGoal);
+                        cmd.Parameters.AddWithValue("@Username", user.Username);
+                        cmd.Parameters.AddWithValue("@PasswordHash", user.PasswordHash); //it should be the parameter of the function(hashpass)
+                        cmd.Parameters.AddWithValue("@Email", user.Email ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@BirthDate", user.BirthDate);
+                        cmd.Parameters.AddWithValue("@Gender", user.Gender.ToString());
+                        cmd.Parameters.AddWithValue("@HeightCm", user.HeightCm);
+                        cmd.Parameters.AddWithValue("@WeightKg", user.WeightKg);
+                        cmd.Parameters.AddWithValue("@DailyCalorieGoal", user.DailyCalorieGoal);
 
-                    cmd.ExecuteNonQuery();
+                        cmd.ExecuteNonQuery();
+                    }
                 }
+                FileLogger.LogError($"User added to database: {user.Username}");
             }
+            catch (Exception ex)
+            {
+                FileLogger.LogError($"Error adding user to database: {user?.Username}", ex); 
+                throw;
+            }
+
         }
 
         public User GetUserByUsername(string username)
         {
-            using (var conn = _dbConnection.GetConnection())
+            try
             {
-                conn.Open();
-                using (var cmd = new SqlCommand("sp_Login", conn))
+                using (var conn = _dbConnection.GetConnection())
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@Username", username);
-
-                    using (var reader = cmd.ExecuteReader())
+                    conn.Open();
+                    using (var cmd = new SqlCommand("sp_Login", conn))
                     {
-                        if (reader.Read())
-                            return MapUserFromReader(reader);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@Username", username);
+
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                var user = MapUserFromReader(reader);
+                                FileLogger.LogError($"User retrieved from database: {username}"); 
+                                return user;
+                            }
+                        }
                     }
                 }
-            }
 
-            return null; //user not found
+                FileLogger.LogError($"User not found in database: {username}"); 
+                return null;
+            }
+            catch (Exception ex)
+            {
+                FileLogger.LogError($"Error retrieving user from database: {username}", ex); 
+                throw;
+            }
         }
 
         public void UpdateUserStats(User user)

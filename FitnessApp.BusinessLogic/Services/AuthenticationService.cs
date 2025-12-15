@@ -10,10 +10,10 @@ namespace FitnessApp.BusinessLogic.Services
 {
     public class AuthenticationService : IAuthenticationService
     {
-        private readonly UserDomain _userDomain;
+        private readonly IUserDomain _userDomain;
 
         // for now we will mock this dependency bcs we don't have a real DB 
-        public AuthenticationService(UserDomain userDomain)
+        public AuthenticationService(IUserDomain userDomain)
         {
             _userDomain = userDomain ?? throw new ArgumentNullException(nameof(userDomain));
         }

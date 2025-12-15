@@ -1,8 +1,11 @@
-﻿using System;
-using System.Windows;
-using DotNetEnv; 
+﻿using DotNetEnv; 
+using FitnessApp.BusinessLogic.Domains;
+using FitnessApp.BusinessLoic.Helpers;
 using FitnessApp.DataAccess;
 using FitnessApp.DataAccess.Repositories;
+using FitnessApp.Models;
+using System;
+using System.Windows;
 using FitnessApp.BusinessLogic.Domains;
 using FitnessApp.BusinessLogic.Helpers;
 
@@ -31,6 +34,7 @@ namespace FitnessApp.WpfUI
                 var dbConnection = new DbConnection(connectionString);
                 var userRepo = new UserRepository(dbConnection);
                 var userDomain = new UserDomain(userRepo);
+                var activityRepo = new ActivityRepository(dbConnection);
 
                 FileLogger.LogError("Application started successfully"); 
             }

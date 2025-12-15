@@ -15,7 +15,7 @@ namespace FitnessApp.Models
         public int CaloriesBurned { get;  set; }
 
 
-        Workout() { }
+        public Workout() { }
 
         public Workout(string activityName, int duration, int calories)
         {

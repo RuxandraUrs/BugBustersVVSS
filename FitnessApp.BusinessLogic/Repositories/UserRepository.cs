@@ -39,7 +39,7 @@ namespace FitnessApp.DataAccess.Repositories
             };
         }
 
-        public void AddUser(User user) //should add a parameter for passwordhash
+        public void AddUser(User user)
         {
             try
             {
@@ -51,7 +51,7 @@ namespace FitnessApp.DataAccess.Repositories
                         cmd.CommandType = CommandType.StoredProcedure;
 
                         cmd.Parameters.AddWithValue("@Username", user.Username);
-                        cmd.Parameters.AddWithValue("@PasswordHash", user.PasswordHash); //it should be the parameter of the function(hashpass)
+                        cmd.Parameters.AddWithValue("@PasswordHash", user.PasswordHash);
                         cmd.Parameters.AddWithValue("@Email", user.Email ?? (object)DBNull.Value);
                         cmd.Parameters.AddWithValue("@BirthDate", user.BirthDate);
                         cmd.Parameters.AddWithValue("@Gender", user.Gender.ToString());

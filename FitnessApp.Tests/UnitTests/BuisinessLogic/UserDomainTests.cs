@@ -26,6 +26,7 @@ namespace FitnessApp.Tests.UnitTests.BuisinessLogic
                 WeightKg = 70,
                 HeightCm = 175,
                 BirthDate = DateTime.Now.AddYears(-20),
+                TargetWeightKg = 68,
                 DailyCalorieGoal = 2000,
                 Gender = "Male"
             };

@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
+using static System.Formats.Asn1.AsnWriter;
 using MyDbConnection = FitnessApp.DataAccess.DbConnection;
 
 namespace FitnessApp.Tests.IntegrationTests
@@ -21,6 +22,7 @@ namespace FitnessApp.Tests.IntegrationTests
         private MyDbConnection? _dbConnection;
         private UserRepository? _userRepo;
         private ActivityRepository? _activityRepo;
+        private TransactionScope? _scope;
 
         [OneTimeSetUp]
         public void GlobalSetup()
@@ -53,22 +55,25 @@ namespace FitnessApp.Tests.IntegrationTests
         [SetUp]
         public void Setup()
         {
+            _scope = new TransactionScope(TransactionScopeOption.Required, TransactionScopeAsyncFlowOption.Enabled);
             _dbConnection = new MyDbConnection(_connectionString);
             _userRepo = new UserRepository(_dbConnection);
             _activityRepo = new ActivityRepository(_dbConnection);
         }
 
-        private void TearDown()
+        [TearDown]
+        public void TearDown()
         {
-            _dbConnection = null;
             _userRepo = null;
             _activityRepo = null;
+            _dbConnection = null;
+            _scope?.Dispose();
+            _scope = null;
         }
 
         [Test]
         public void AddUser_ValidUser_ShouldInsertIntoDatabase()
         {
-            using var scope = new TransactionScope();
             var user = new User
             {
                 Username = "TestIntegrationUser",
@@ -78,6 +83,7 @@ namespace FitnessApp.Tests.IntegrationTests
                 Gender = "Male",
                 HeightCm = 180,
                 WeightKg = 80,
+                TargetWeightKg = 68,
                 DailyCalorieGoal = 2000
             };
 
@@ -95,7 +101,6 @@ namespace FitnessApp.Tests.IntegrationTests
         [Test]
         public void AddUser_DuplicateUsername_ShouldThrowSqlException()
         {
-            using var scope = new TransactionScope();
             var user = new User
             {
                 Username = "UniqueUser",
@@ -105,6 +110,7 @@ namespace FitnessApp.Tests.IntegrationTests
                 Gender = "Female",
                 HeightCm = 170,
                 WeightKg = 70,
+                TargetWeightKg = 68,
                 DailyCalorieGoal = 2000
             };
 
@@ -116,7 +122,6 @@ namespace FitnessApp.Tests.IntegrationTests
         [Test]
         public void AddMeal_ShouldCreateDailyLogAndMeal()
         {
-            using var scope = new TransactionScope();
             var user = new User
             {
                 Username = "MealTester",
@@ -126,6 +131,7 @@ namespace FitnessApp.Tests.IntegrationTests
                 Gender = "Male",
                 HeightCm = 170,
                 WeightKg = 70,
+                TargetWeightKg = 68,
                 DailyCalorieGoal = 2000
             };
             _userRepo.AddUser(user);
@@ -154,7 +160,6 @@ namespace FitnessApp.Tests.IntegrationTests
         [Test]
         public void GetDailyLog_CalculatesTotalsCorrectly()
         {
-            using var scope = new TransactionScope();
             var user = new User
             {
                 Username = "CalcTester",
@@ -164,6 +169,7 @@ namespace FitnessApp.Tests.IntegrationTests
                 Gender = "Female",
                 HeightCm = 180,
                 WeightKg = 80,
+                TargetWeightKg = 75,
                 DailyCalorieGoal = 2000
             };
             _userRepo.AddUser(user);
@@ -197,7 +203,6 @@ namespace FitnessApp.Tests.IntegrationTests
         [Test]
         public void UpdateUserStats_ShouldPersistChanges()
         {
-            using var scope = new TransactionScope();
             var user = new User
             {
                 Username = "Updater",
@@ -229,7 +234,6 @@ namespace FitnessApp.Tests.IntegrationTests
         [Test]
         public void DeleteUser_ShouldRemoveUserFromDb()
         {
-            using var scope = new TransactionScope();
             var user = new User
             { 
                 Username = "Deletable",
@@ -239,6 +243,7 @@ namespace FitnessApp.Tests.IntegrationTests
                 Gender = "Male",
                 HeightCm = 180,
                 WeightKg = 80,
+                TargetWeightKg = 75,
                 DailyCalorieGoal = 2000
             };
             _userRepo.AddUser(user);

@@ -13,7 +13,6 @@ namespace FitnessApp.DataAccess.Interfaces
 
         void AddWorkout(Workout workout, int userId, DateTime logDate);
 
-        //void AddDailyLog(DailyLog dailyLog, int userId, DateTime logDate);
 
         Meal GetMealById(int mealId);
         Workout GetWorkoutById(int workoutId);
@@ -22,10 +21,8 @@ namespace FitnessApp.DataAccess.Interfaces
 
         void UpdateMeal(Meal meal);
         void UpdateWorkout(Workout workout);
-        //void UpdateDailyLog(DailyLog dailyLog);
 
         void DeleteMeal(int mealId);
         void DeleteWorkout(int workoutId);
-        //void DeleteDailyLog(int userId, DateTime date);
     }
 }

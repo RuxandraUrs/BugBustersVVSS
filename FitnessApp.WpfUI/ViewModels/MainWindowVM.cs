@@ -39,8 +39,8 @@ namespace FitnessApp.WpfUI.ViewModels
                 _userDomain.Login(Username, Password);
                 //MessageBox.Show("Login successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                MainWindow mainWindow = App.Current.MainWindow as MainWindow;
-                mainWindow?.Close();
+                //MainWindow mainWindow = App.Current.MainWindow as MainWindow;
+                //mainWindow?.Close();
 
                 User user = _userDomain.GetUserByUsername(Username);
                 UserProfile userProfile = new UserProfile(user);

@@ -21,5 +21,7 @@ namespace FitnessApp.WpfUI.ViewModels
 
         public string Username => currentUser?.Username ?? string.Empty;
         public string WelcomeMessage => $"Welcome, {Username}!";
+        public double UserBMI => _userDomain.CalculateBMI(Username);
+        public double UserBMR => _userDomain.CalculateBMR(Username);
     }
 }

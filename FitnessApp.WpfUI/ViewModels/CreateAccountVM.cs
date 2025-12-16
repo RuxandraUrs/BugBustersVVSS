@@ -29,23 +29,7 @@ namespace FitnessApp.WpfUI.ViewModels
         public string Password { get; set; }
         public string Email { get; set; }
         public DateTime BirthDate { get; set; } = DateTime.Today;
-        public List<string> GenderOptions { get; } = new()
-        {
-            "Male",
-            "Female",
-            "Other"
-        };
-
-        private string _gender;
-        public string Gender
-        {
-            get => _gender;
-            set
-            {
-                _gender = value;
-                OnPropertyChanged();
-            }
-        }
+        public string Gender { get; set; }
         private double? _heightCm;
         public double? HeightCm
         {
@@ -93,6 +77,13 @@ namespace FitnessApp.WpfUI.ViewModels
 
         public ICommand CreateAccountCommand { get; }
         public ICommand CancelCommand { get; }
+
+        private bool CanCreateAccount()
+        {
+            return !string.IsNullOrWhiteSpace(Username)
+                   && !string.IsNullOrWhiteSpace(Password)
+                   && !string.IsNullOrWhiteSpace(Email);
+        }
 
         private void CreateAccount()
         {

@@ -21,48 +21,6 @@ namespace FitnessApp.BusinessLogic.Domains
             userRepository.AddUser(user);
         }
 
-        public void UpdateUser(User user)
-        {
-            if (user == null)
-            {
-                FileLogger.LogWarning($"Update failed: User not found");
-                return;
-            }
-            string username = user.Username;
-            FileLogger.LogDebug($"Updating user: {username}");
-            try
-            {
-                FileLogger.LogInfo($" Updated user '{username}'");
-                userRepository.UpdateUserStats(user);
-            }
-            catch (Exception ex)
-            {
-                FileLogger.LogError($"Error updating user: {username}", ex);
-                throw;
-            }
-        }
-
-        public void DeleteUser(User user)
-        {
-            if (user == null)
-            {
-                FileLogger.LogWarning($"Update failed: User not found");
-                return;
-            }
-            string username = user.Username;
-            FileLogger.LogDebug($"Deleting user: {username}");
-            try
-            {
-                FileLogger.LogInfo($" Deleted user '{username}'");
-                userRepository.DeleteUser(user.Id);
-            }
-            catch (Exception ex)
-            {
-                FileLogger.LogError($"Error deleting user: {username}", ex);
-                throw;
-            }
-        }
-
         public User GetUserByUsername(string username)
         {
             return userRepository.GetUserByUsername(username);

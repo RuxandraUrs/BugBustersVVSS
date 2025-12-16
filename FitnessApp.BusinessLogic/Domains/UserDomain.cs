@@ -40,7 +40,7 @@ namespace FitnessApp.BusinessLogic.Domains
             FileLogger.LogInfo($"Attempting to register user: {user?.Username}");
             try
             {
-                if (!_validator.Validate(user, out string errorMessage))
+                if (!_validator.ValidateRegistration(user, out string errorMessage))
                 {
                     FileLogger.LogWarning($"User validation failed for '{user?.Username}': {errorMessage}");
                     throw new ArgumentException(errorMessage);
@@ -68,6 +68,12 @@ namespace FitnessApp.BusinessLogic.Domains
             FileLogger.LogInfo($"Login attempt for username: {username}");
             try
             {
+                if (!_validator.ValidateLogin(userRepository, username, password, out string errorMessage))
+                {
+                    FileLogger.LogWarning($"User validation failed for '{username}': {errorMessage}");
+                    throw new ArgumentException(errorMessage);
+                }
+
                 var user = userRepository.GetUserByUsername(username);
 
                 if (user == null || user.PasswordHash != password)

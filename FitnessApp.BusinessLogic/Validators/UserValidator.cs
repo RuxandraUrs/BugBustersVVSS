@@ -1,11 +1,12 @@
 ﻿using System;
+using FitnessApp.DataAccess.Interfaces;
 using FitnessApp.Models;
 
 namespace FitnessApp.BusinessLogic.Validators
 {
     public class UserValidator
     {
-        public bool Validate(User user, out string errorMessage)
+        public bool ValidateRegistration(User user, out string errorMessage)
         {
             errorMessage = string.Empty;
 
@@ -37,6 +38,27 @@ namespace FitnessApp.BusinessLogic.Validators
             if (user.WeightKg <= 0 || user.HeightCm <= 0)
             {
                 errorMessage = "Weight and height must be positive values.";
+                return false;
+            }
+
+            return true;
+        }
+
+        public bool ValidateLogin(IUserRepository userRepository, string name, string password, out string errorMessage)
+        {
+            errorMessage = string.Empty;
+
+            User user = userRepository.GetUserByUsername(name);
+
+            if (user == null)
+            {
+                errorMessage = "User wasn't found.";
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(password) || password != user.PasswordHash)
+            {
+                errorMessage = "Password is incorrect.";
                 return false;
             }
 

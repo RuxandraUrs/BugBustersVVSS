@@ -36,15 +36,19 @@ namespace FitnessApp.WpfUI.ViewModels
         {
             try
             {
-                _userDomain.Login(Username, Password);
-                //MessageBox.Show("Login successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                var user = _userDomain.Login(Username, Password);
 
-                //MainWindow mainWindow = App.Current.MainWindow as MainWindow;
-                //mainWindow?.Close();
+                if (user == null)
+                {
+                    MessageBox.Show("Invalid username or password.", "Login Failed", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
 
-                User user = _userDomain.GetUserByUsername(Username);
-                UserProfile userProfile = new UserProfile(user);
+                UserProfile userProfile = new UserProfile(user, _userDomain);
                 userProfile.Show();
+
+                Application.Current.MainWindow.Close();
+                Application.Current.MainWindow = userProfile;
             }
             catch (Exception ex)
             {

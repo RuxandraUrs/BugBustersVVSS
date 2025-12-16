@@ -25,17 +25,17 @@ namespace FitnessApp.WpfUI.Views
     /// </summary>
     public partial class UserProfile : Window
     {
-        public UserProfile(User user)
+        public UserProfile(User user, IUserDomain userDomain)
         {
             InitializeComponent();
 
-            string connString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
-            if (string.IsNullOrWhiteSpace(connString))
-                throw new InvalidOperationException("DB_CONNECTION_STRING env variable not found.");
+            //string connString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+            //if (string.IsNullOrWhiteSpace(connString))
+            //    throw new InvalidOperationException("DB_CONNECTION_STRING env variable not found.");
 
-            DbConnection dbConnection = new DbConnection(connString);
-            IUserRepository userRepository = new UserRepository(dbConnection);
-            IUserDomain userDomain = new UserDomain(userRepository);
+            //DbConnection dbConnection = new DbConnection(connString);
+            //IUserRepository userRepository = new UserRepository(dbConnection);
+            //IUserDomain userDomain = new UserDomain(userRepository);
 
             DataContext = new UserProfileVM(user, userDomain);
         }

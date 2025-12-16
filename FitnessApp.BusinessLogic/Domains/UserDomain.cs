@@ -110,10 +110,10 @@ namespace FitnessApp.BusinessLogic.Domains
             FileLogger.LogInfo($"Login attempt for username: {username}");
             try
             {
-                if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+                if (!_validator.ValidateLogin(userRepository, username, password, out string errorMessage))
                 {
-                    FileLogger.LogWarning($"Login failed: Empty username or password.");
-                    throw new ArgumentException("Username and password are required.");
+                    FileLogger.LogWarning($"User validation failed for '{username}': {errorMessage}");
+                    throw new ArgumentException(errorMessage);
                 }
 
                 var user = userRepository.GetUserByUsername(username);

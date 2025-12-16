@@ -19,13 +19,14 @@ namespace FitnessApp.Models
 
         public User() { }
 
-        public User(string username, string email, double weight, double height, int calorieGoal)
+        public User(string username, string email, double weight, double height, double targetWeight, int calorieGoal)
         {
             SetUsername(username);
             SetEmail(email);
             SetWeight(weight);
 
             HeightCm = height;
+            TargetWeightKg = targetWeight;
             DailyCalorieGoal = calorieGoal;
             CreatedAt = DateTime.Now;
         }

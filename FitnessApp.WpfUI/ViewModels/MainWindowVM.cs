@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using FitnessApp.Models;
 using FitnessApp.BusinessLogic.Domains;
 using FitnessApp.WpfUI.Services;
 using FitnessApp.WpfUI.Views;
@@ -36,10 +37,14 @@ namespace FitnessApp.WpfUI.ViewModels
             try
             {
                 _userDomain.Login(Username, Password);
-                MessageBox.Show("Login successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                //MessageBox.Show("Login successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                //CreateAccount createAccount = Application.Current.Windows.OfType<CreateAccount>().FirstOrDefault();
-                //createAccount?.Close();
+                MainWindow mainWindow = App.Current.MainWindow as MainWindow;
+                mainWindow?.Close();
+
+                User user = _userDomain.GetUserByUsername(Username);
+                UserProfile userProfile = new UserProfile(user);
+                userProfile.Show();
             }
             catch (Exception ex)
             {

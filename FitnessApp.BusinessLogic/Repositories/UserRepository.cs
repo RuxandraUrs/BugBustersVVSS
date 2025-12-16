@@ -32,6 +32,7 @@ namespace FitnessApp.DataAccess.Repositories
                 Email = reader.GetString(reader.GetOrdinal("Email")), 
                 HeightCm = reader.GetDouble(reader.GetOrdinal("HeightCm")),
                 WeightKg = reader.GetDouble(reader.GetOrdinal("WeightKg")),
+                TargetWeightKg = reader.GetDouble(reader.GetOrdinal("TargetWeightKg")),
                 DailyCalorieGoal = reader.GetInt32(reader.GetOrdinal("DailyCalorieGoal"))
             };
         }
@@ -54,6 +55,7 @@ namespace FitnessApp.DataAccess.Repositories
                         cmd.Parameters.AddWithValue("@Gender", user.Gender.ToString());
                         cmd.Parameters.AddWithValue("@HeightCm", user.HeightCm);
                         cmd.Parameters.AddWithValue("@WeightKg", user.WeightKg);
+                        cmd.Parameters.AddWithValue("@TargetWeightKg", user.TargetWeightKg);
                         cmd.Parameters.AddWithValue("@DailyCalorieGoal", user.DailyCalorieGoal);
 
                         cmd.ExecuteNonQuery();
@@ -116,6 +118,7 @@ namespace FitnessApp.DataAccess.Repositories
                     cmd.Parameters.AddWithValue("@Email", user.Email ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@HeightCm", user.HeightCm);
                     cmd.Parameters.AddWithValue("@WeightKg", user.WeightKg);
+                    cmd.Parameters.AddWithValue("@TargetWeightKg", user.TargetWeightKg);
                     cmd.Parameters.AddWithValue("@DailyCalorieGoal", user.DailyCalorieGoal);
 
                     cmd.ExecuteNonQuery();

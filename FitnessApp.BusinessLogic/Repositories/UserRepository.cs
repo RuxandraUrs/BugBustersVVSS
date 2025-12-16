@@ -113,7 +113,7 @@ namespace FitnessApp.DataAccess.Repositories
                     using (var cmd = new SqlCommand("sp_UpdateUser", conn))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.AddWithValue("@Id", user.Id);
+                        cmd.Parameters.AddWithValue("@Username", user.Username);
                         cmd.Parameters.AddWithValue("@Email", user.Email ?? (object)DBNull.Value);
                         cmd.Parameters.AddWithValue("@HeightCm", user.HeightCm);
                         cmd.Parameters.AddWithValue("@WeightKg", user.WeightKg);

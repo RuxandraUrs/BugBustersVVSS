@@ -94,8 +94,8 @@ namespace FitnessApp.WpfUI.ViewModels
                 currentUser.TargetWeightKg = TargetWeightKg ?? currentUser.TargetWeightKg;
                 currentUser.DailyCalorieGoal = DailyCalorieGoal ?? currentUser.DailyCalorieGoal;
 
-                //_userDomain.UpdateUser(currentUser);
-                MessageBox.Show("User updated succesfully!!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                _userDomain.UpdateUser(currentUser);
+                MessageBox.Show("User updated succesfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
 
                 UpdateAccount updateAccount = Application.Current.Windows.OfType<UpdateAccount>().FirstOrDefault();
                 updateAccount?.Close();

@@ -68,7 +68,7 @@ namespace FitnessApp.WpfUI.ViewModels
             {
                 try
                 {
-                    //_userDomain.DeleteUser(currentUser);
+                    _userDomain.DeleteUser(currentUser);
                     MessageBox.Show("Your account has been deleted.", "Account Deleted", MessageBoxButton.OK, MessageBoxImage.Information);
 
                     MainWindow mainWindow = new MainWindow();

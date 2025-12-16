@@ -6,10 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FitnessApp.DataAccess.Repositories
 {
@@ -46,6 +42,7 @@ namespace FitnessApp.DataAccess.Repositories
                 CaloriesBurned = Convert.ToInt32(reader["CaloriesBurned"])
             };
         }
+
         public void AddMeal(Meal meal, int userId, DateTime logDate)
         {
             try
@@ -56,7 +53,6 @@ namespace FitnessApp.DataAccess.Repositories
                     using (var cmd = new SqlCommand("sp_AddMeal", conn))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-
                         cmd.Parameters.AddWithValue("@UserId", userId);
                         cmd.Parameters.AddWithValue("@LogDate", logDate.Date);
                         cmd.Parameters.AddWithValue("@FoodName", meal.FoodName);
@@ -67,7 +63,8 @@ namespace FitnessApp.DataAccess.Repositories
                         cmd.ExecuteNonQuery();
                     }
                 }
-                FileLogger.LogError($"Meal added to database: {meal.FoodName} for user {userId}");
+
+                FileLogger.LogInfo($"Meal added to database: {meal.FoodName} for user {userId}");
             }
             catch (Exception ex)
             {
@@ -86,7 +83,6 @@ namespace FitnessApp.DataAccess.Repositories
                     using (var cmd = new SqlCommand("sp_AddWorkout", conn))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-
                         cmd.Parameters.AddWithValue("@UserId", userId);
                         cmd.Parameters.AddWithValue("@LogDate", logDate.Date);
                         cmd.Parameters.AddWithValue("@ActivityName", workout.ActivityName);
@@ -96,7 +92,8 @@ namespace FitnessApp.DataAccess.Repositories
                         cmd.ExecuteNonQuery();
                     }
                 }
-                FileLogger.LogError($"Workout added to database: {workout.ActivityName} for user {userId}");
+
+                FileLogger.LogInfo($"Workout added to database: {workout.ActivityName} for user {userId}");
             }
             catch (Exception ex)
             {
@@ -115,7 +112,6 @@ namespace FitnessApp.DataAccess.Repositories
                     using (var cmd = new SqlCommand("SELECT * FROM Meals WHERE Id = @Id", conn))
                     {
                         cmd.Parameters.AddWithValue("@Id", mealId);
-
                         using (var reader = cmd.ExecuteReader())
                         {
                             if (reader.Read())
@@ -125,6 +121,8 @@ namespace FitnessApp.DataAccess.Repositories
                         }
                     }
                 }
+
+                FileLogger.LogWarning($"Meal with ID {mealId} not found.");
                 return null;
             }
             catch (Exception ex)
@@ -153,6 +151,8 @@ namespace FitnessApp.DataAccess.Repositories
                         }
                     }
                 }
+
+                FileLogger.LogWarning($"Workout with ID {workoutId} not found.");
                 return null;
             }
             catch (Exception ex)
@@ -165,7 +165,6 @@ namespace FitnessApp.DataAccess.Repositories
         public DailyLog GetDailyLog(int userId, DateTime date)
         {
             var dailyLog = new DailyLog(userId, date);
-
             try
             {
                 using (var conn = _dbConnection.GetConnection())
@@ -175,7 +174,6 @@ namespace FitnessApp.DataAccess.Repositories
                     using (var cmd = new SqlCommand("sp_GetMealsByDate", conn))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-
                         cmd.Parameters.AddWithValue("@UserId", userId);
                         cmd.Parameters.AddWithValue("@LogDate", date.Date);
 
@@ -190,8 +188,7 @@ namespace FitnessApp.DataAccess.Repositories
 
                     using (var cmd = new SqlCommand("sp_GetWorkoutsByDate", conn))
                     {
-                        cmd.CommandType = CommandType.StoredProcedure; 
-
+                        cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@UserId", userId);
                         cmd.Parameters.AddWithValue("@LogDate", date.Date);
 
@@ -205,6 +202,8 @@ namespace FitnessApp.DataAccess.Repositories
                     }
                 }
                 dailyLog.CalculateTotals();
+
+                FileLogger.LogInfo($"DailyLog retrieved for User {userId} on {date:d}. Items: {dailyLog.Meals.Count + dailyLog.Workouts.Count}");
                 return dailyLog;
             }
             catch (Exception ex)
@@ -217,17 +216,14 @@ namespace FitnessApp.DataAccess.Repositories
         public List<DailyHistory> GetHistory(int userId, DateTime startDate, DateTime endDate)
         {
             var historyList = new List<DailyHistory>();
-
             try
             {
                 using (var conn = _dbConnection.GetConnection())
                 {
                     conn.Open();
-
                     using (var cmd = new SqlCommand("sp_GetHistory", conn))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-
                         cmd.Parameters.AddWithValue("@UserId", userId);
                         cmd.Parameters.AddWithValue("@StartDate", startDate);
                         cmd.Parameters.AddWithValue("@EndDate", endDate);
@@ -239,18 +235,17 @@ namespace FitnessApp.DataAccess.Repositories
                                 var item = new DailyHistory
                                 {
                                     LogDate = reader.GetDateTime(reader.GetOrdinal("LogDate")),
-
                                     TotalCaloriesIn = reader.GetDouble(reader.GetOrdinal("TotalCaloriesIn")),
                                     TotalCaloriesBurned = reader.GetDouble(reader.GetOrdinal("TotalCaloriesBurned")),
-
                                     CalorieDifference = reader.GetDouble(reader.GetOrdinal("CalorieDifference"))
                                 };
-
                                 historyList.Add(item);
                             }
                         }
                     }
                 }
+
+                FileLogger.LogInfo($"History retrieved for user {userId}. Count: {historyList.Count}");
                 return historyList;
             }
             catch (Exception ex)
@@ -259,7 +254,7 @@ namespace FitnessApp.DataAccess.Repositories
                 throw;
             }
         }
-       
+
         public void UpdateMeal(Meal meal)
         {
             try
@@ -267,11 +262,9 @@ namespace FitnessApp.DataAccess.Repositories
                 using (var conn = _dbConnection.GetConnection())
                 {
                     conn.Open();
-                    
                     using (var cmd = new SqlCommand("sp_UpdateMeal", conn))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-
                         cmd.Parameters.AddWithValue("@Id", meal.Id);
                         cmd.Parameters.AddWithValue("@FoodName", meal.FoodName);
                         cmd.Parameters.AddWithValue("@Quantity", meal.QuantityGrams);
@@ -281,6 +274,8 @@ namespace FitnessApp.DataAccess.Repositories
                         cmd.ExecuteNonQuery();
                     }
                 }
+
+                FileLogger.LogInfo($"Meal updated: ID {meal.Id}");
             }
             catch (Exception ex)
             {
@@ -288,6 +283,7 @@ namespace FitnessApp.DataAccess.Repositories
                 throw;
             }
         }
+
         public void UpdateWorkout(Workout workout)
         {
             try
@@ -295,11 +291,9 @@ namespace FitnessApp.DataAccess.Repositories
                 using (var conn = _dbConnection.GetConnection())
                 {
                     conn.Open();
-
                     using (var cmd = new SqlCommand("sp_UpdateWorkout", conn))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-
                         cmd.Parameters.AddWithValue("@Id", workout.Id);
                         cmd.Parameters.AddWithValue("@ActivityName", workout.ActivityName);
                         cmd.Parameters.AddWithValue("@DurationMinutes", workout.DurationMinutes);
@@ -308,6 +302,8 @@ namespace FitnessApp.DataAccess.Repositories
                         cmd.ExecuteNonQuery();
                     }
                 }
+
+                FileLogger.LogInfo($"Workout updated: ID {workout.Id}");
             }
             catch (Exception ex)
             {
@@ -315,6 +311,7 @@ namespace FitnessApp.DataAccess.Repositories
                 throw;
             }
         }
+
         public void DeleteMeal(int mealId)
         {
             try
@@ -328,6 +325,8 @@ namespace FitnessApp.DataAccess.Repositories
                         cmd.ExecuteNonQuery();
                     }
                 }
+
+                FileLogger.LogInfo($"Meal deleted: ID {mealId}");
             }
             catch (Exception ex)
             {
@@ -335,6 +334,7 @@ namespace FitnessApp.DataAccess.Repositories
                 throw;
             }
         }
+
         public void DeleteWorkout(int workoutId)
         {
             try
@@ -348,6 +348,8 @@ namespace FitnessApp.DataAccess.Repositories
                         cmd.ExecuteNonQuery();
                     }
                 }
+
+                FileLogger.LogInfo($"Workout deleted: ID {workoutId}");
             }
             catch (Exception ex)
             {

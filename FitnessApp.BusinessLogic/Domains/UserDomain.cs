@@ -21,48 +21,6 @@ namespace FitnessApp.BusinessLogic.Domains
             userRepository.AddUser(user);
         }
 
-        public void UpdateUser(User user)
-        {
-            if (user == null)
-            {
-                FileLogger.LogWarning($"Update failed: User not found");
-                return;
-            }
-            string username = user.Username;
-            FileLogger.LogDebug($"Updating user: {username}");
-            try
-            {
-                FileLogger.LogInfo($" Updated user '{username}'");
-                userRepository.UpdateUserStats(user);
-            }
-            catch (Exception ex)
-            {
-                FileLogger.LogError($"Error updating user: {username}", ex);
-                throw;
-            }
-        }
-
-        public void DeleteUser(User user)
-        {
-            if (user == null)
-            {
-                FileLogger.LogWarning($"Update failed: User not found");
-                return;
-            }
-            string username = user.Username;
-            FileLogger.LogDebug($"Deleting user: {username}");
-            try
-            {
-                FileLogger.LogInfo($" Deleted user '{username}'");
-                userRepository.DeleteUser(user.Id);
-            }
-            catch (Exception ex)
-            {
-                FileLogger.LogError($"Error deleting user: {username}", ex);
-                throw;
-            }
-        }
-
         public User GetUserByUsername(string username)
         {
             return userRepository.GetUserByUsername(username);
@@ -110,10 +68,10 @@ namespace FitnessApp.BusinessLogic.Domains
             FileLogger.LogInfo($"Login attempt for username: {username}");
             try
             {
-                if (!_validator.ValidateLogin(userRepository, username, password, out string errorMessage))
+                if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
                 {
-                    FileLogger.LogWarning($"User validation failed for '{username}': {errorMessage}");
-                    throw new ArgumentException(errorMessage);
+                    FileLogger.LogWarning($"Login failed: Empty username or password.");
+                    throw new ArgumentException("Username and password are required.");
                 }
 
                 var user = userRepository.GetUserByUsername(username);
@@ -260,14 +218,14 @@ namespace FitnessApp.BusinessLogic.Domains
 
 
                 if (wouldExceed)
-                { 
-                   FileLogger.LogWarning($"Budget check for '{username}': Adding {newFoodCalories} cal would EXCEED limit! ({newTotal}/{limit} cal)");
+                {
+                    FileLogger.LogWarning($"Budget check for '{username}': Adding {newFoodCalories} cal would EXCEED limit! ({newTotal}/{limit} cal)");
                 }
                 else
-                { 
+                {
                     FileLogger.LogInfo($"Budget check for '{username}': Within limit ({newTotal}/{limit} cal)");
                 }
-                
+
                 return wouldExceed;
             }
             catch (Exception ex)

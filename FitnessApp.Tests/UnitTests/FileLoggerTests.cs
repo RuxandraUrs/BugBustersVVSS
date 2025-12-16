@@ -110,7 +110,7 @@ namespace FitnessApp.Tests.UnitTests
 
             var content = File.ReadAllText(_logFilePath);
             Assert.That(content, Does.Contain("InvalidOperationException"));
-            
+
             Assert.That(content, Does.Contain("Inner exception"));
         }
 

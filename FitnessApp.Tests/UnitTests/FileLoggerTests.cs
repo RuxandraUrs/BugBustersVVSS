@@ -1,19 +1,17 @@
 ﻿using FitnessApp.BusinessLogic.Helpers;
+using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 
 namespace FitnessApp.Tests.UnitTests
 {
     [TestFixture]
     public class FileLoggerTests
     {
-        private string _logFilePath = "application_log.txt";
+        private string _logFilePath = Path.Combine("Logs", "application_log.txt");
 
         [SetUp]
-        public void SetUp() 
+        public void SetUp()
         {
             if (File.Exists(_logFilePath))
             {
@@ -36,6 +34,8 @@ namespace FitnessApp.Tests.UnitTests
             string testMessage = "This is a test error";
 
             FileLogger.LogError(testMessage);
+
+            Assert.IsTrue(File.Exists(_logFilePath), "Fisierul de log nu a fost creat in folderul Logs!");
 
             var content = File.ReadAllText(_logFilePath);
             Assert.That(content, Does.Contain(testMessage));
@@ -81,7 +81,9 @@ namespace FitnessApp.Tests.UnitTests
             FileLogger.LogError("Test error");
 
             var content = File.ReadAllText(_logFilePath);
-            Assert.That(content, Does.Contain("Date and Time"));
+
+            string currentYear = DateTime.Now.Year.ToString();
+            Assert.That(content, Does.Contain(currentYear));
         }
 
         [Test]
@@ -108,6 +110,8 @@ namespace FitnessApp.Tests.UnitTests
 
             var content = File.ReadAllText(_logFilePath);
             Assert.That(content, Does.Contain("InvalidOperationException"));
+            
+            Assert.That(content, Does.Contain("Inner exception"));
         }
 
         [Test]

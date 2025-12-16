@@ -21,7 +21,7 @@ namespace FitnessApp.Tests.UnitTests.Model
         [Test]
         public void Constructor_WithParameters_ShouldSetProperties()
         {
-            var user = new User("testUser", "test@email.com", 70, 175, 2000);
+            var user = new User("testUser", "test@email.com", 70, 175, 65, 2000);
 
             Assert.AreEqual("testUser", user.Username);
             Assert.AreEqual("test@email.com", user.Email);
@@ -33,8 +33,7 @@ namespace FitnessApp.Tests.UnitTests.Model
         [Test]
         public void Constructor_ShouldSetCreatedAt()
         {
-            var user = new User("testuser", "test@email.com", 70, 175, 2000);
-
+            var user = new User("testuser", "test@email.com", 70, 175, 65, 2000);
             Assert.IsNotNull(user.CreatedAt);
             Assert.LessOrEqual((DateTime.Now - user.CreatedAt).TotalSeconds, 1);
         }

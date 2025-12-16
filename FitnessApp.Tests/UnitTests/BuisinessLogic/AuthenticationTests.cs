@@ -25,7 +25,7 @@ namespace FitnessApp.Tests.UnitTests.BuisinessLogic
         public void RegisterUser_ValidUser_CallsAddUserInRepository()
         {
 
-            var newUser = new User("ValidUser", "test@email.com", 70, 175, 2000);
+            var newUser = new User("ValidUser", "test@email.com", 70, 175, 65, 2000);
             newUser.PasswordHash = "safePssword1234";
             newUser.BirthDate = new DateTime(2000, 1, 1);
 
@@ -37,7 +37,7 @@ namespace FitnessApp.Tests.UnitTests.BuisinessLogic
         [Test]
         public void RegisterUser_DomainThrowsException_ServiceBubblesException()
         {
-            var newUser = new User("DuplicateUser", "test@email.com", 70, 175, 2000);
+            var newUser = new User("DuplicateUser", "test@email.com", 70, 175, 65, 2000);
 
             _mockUserDomain.Setup(d => d.RegisterUser(It.IsAny<User>()))
                            .Throws(new InvalidOperationException("Username already exists."));
@@ -53,7 +53,7 @@ namespace FitnessApp.Tests.UnitTests.BuisinessLogic
             string username = "TestUser";
             string password = "SecretPassword";
 
-            var expectedUser = new User(username, "test@email.com", 70, 180, 2000);
+            var expectedUser = new User(username, "test@email.com", 70, 180, 68, 2000);
 
             _mockUserDomain.Setup(d => d.Login(username, password)).Returns(expectedUser);
 

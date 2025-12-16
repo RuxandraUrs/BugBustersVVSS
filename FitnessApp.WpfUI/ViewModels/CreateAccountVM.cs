@@ -112,10 +112,17 @@ namespace FitnessApp.WpfUI.ViewModels
                 };
 
                 _userDomain.RegisterUser(user);
-                MessageBox.Show("Account created successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                if (Application.Current != null)
+                {
+                    MessageBox.Show("Account created successfully!", "Success",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
 
-                CreateAccount createAccount = Application.Current.Windows.OfType<CreateAccount>().FirstOrDefault();
-                createAccount?.Close();
+                    CreateAccount createAccount = Application.Current.Windows.OfType<CreateAccount>().FirstOrDefault();
+                    createAccount?.Close();
+                }
+
+                //CreateAccount createAccount = Application.Current.Windows.OfType<CreateAccount>().FirstOrDefault();
+                //createAccount?.Close();
             }
             catch (Exception ex)
             {

@@ -6,8 +6,7 @@ namespace FitnessApp.BusinessLogic.Domains
     {
         User GetUserByUsername(string username);
         void AddUser(User user);
-        void UpdateUser(User user);
-        void DeleteUser(User user);
+
         void RegisterUser(User user);
         User Login(string username, string password);
 

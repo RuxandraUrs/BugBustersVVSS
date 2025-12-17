@@ -23,6 +23,7 @@ namespace FitnessApp.WpfUI.ViewModels
             SignInCommand = new RelayCommand(SignIn);
             ExitCommand = new RelayCommand(Exit);
             OpenSignUpPageCommand = new RelayCommand(OpenSignUpPage);
+            AboutCommand = new RelayCommand(About);
         }
 
         public string Username { get; set; }
@@ -31,6 +32,7 @@ namespace FitnessApp.WpfUI.ViewModels
         public ICommand SignInCommand { get; }
         public ICommand ExitCommand { get; }
         public ICommand OpenSignUpPageCommand { get; }
+        public ICommand AboutCommand { get; }
 
         private void SignIn()
         {
@@ -67,6 +69,13 @@ namespace FitnessApp.WpfUI.ViewModels
         {
             CreateAccount signUpPage = new CreateAccount();
             signUpPage.ShowDialog();
+        }
+
+        private void About()
+        {
+            MessageBox.Show("Developed by Bug Busters\n" +
+                "Collaborators:\nHuruba Adriana\nUrs Ruxandra\n" +
+                "Vilcu Andreea\nEnache Nicolae", "About FitnessApp", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }

@@ -40,5 +40,13 @@ namespace FitnessApp.WpfUI.Views
 
             DataContext = new CreateAccountVM(userDomain);
         }
+
+        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is CreateAccountVM vm)
+            {
+                vm.Password = ((PasswordBox)sender).Password;
+            }
+        }
     }
 }

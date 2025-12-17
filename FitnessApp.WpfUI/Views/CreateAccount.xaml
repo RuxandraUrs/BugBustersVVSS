@@ -19,7 +19,7 @@
         <Label x:Name="TargetWeightLabel" Content="Target Weight :" HorizontalAlignment="Left" Margin="188,520,0,0" VerticalAlignment="Top" Foreground="#FF7DFFD8" FontSize="22" FontFamily="Bahnschrift"/>
         <Label x:Name="TargetCalLabel" Content="Daily Calories Intake :" HorizontalAlignment="Left" Margin="119,570,0,0" VerticalAlignment="Top" Foreground="#FF7DFFD8" FontSize="22" FontFamily="Bahnschrift"/>
         <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="368,172,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="180" Background="#FFA5FFE4" Height="34" FontSize="22" FontFamily="Bahnschrift"/>
-        <TextBox Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="368,222,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="180" Background="#FFA5FFE4" Height="34" FontSize="22" FontFamily="Bahnschrift"/>
+        <PasswordBox x:Name="PasswordBox" HorizontalAlignment="Left" Margin="368,222,0,0" Width="180" Background="#FFA5FFE4" FontSize="22" FontFamily="Bahnschrift" PasswordChanged="PasswordBox_PasswordChanged" Height="34" VerticalAlignment="Top"/>
         <TextBox Text="{Binding Email}" HorizontalAlignment="Left" Margin="368,272,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="180" Background="#FFA5FFE4" Height="34" FontSize="22" FontFamily="Bahnschrift"/>
         <DatePicker SelectedDate="{Binding BirthDate}" HorizontalAlignment="Left" Margin="368,322,0,0" VerticalAlignment="Top" Width="180" Background="#FFA5FFE4" Height="34" FontSize="22" FontFamily="Bahnschrift"/>
         <ComboBox

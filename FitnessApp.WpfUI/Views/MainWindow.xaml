@@ -11,7 +11,7 @@
     <Grid Background="#FF2D2D2D">
         <Label Content="Fitness App" HorizontalAlignment="Left" Margin="268,74,0,0" VerticalAlignment="Top" Height="72" Width="264" FontWeight="Bold" Foreground="#FF7DFFD8" FontSize="48" FontFamily="Bahnschrift"/>
         <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="267,196,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="387" Background="#FFA5FFE4" Height="34" FontSize="22" FontFamily="Bahnschrift"/>
-        <TextBox Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="267,273,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="387" Background="#FFA5FFE4" Height="34" FontSize="22" FontFamily="Bahnschrift"/>
+        <PasswordBox x:Name="PasswordBox" HorizontalAlignment="Left" Margin="268,272,0,0" Width="387" Background="#FFA5FFE4" FontSize="22" FontFamily="Bahnschrift" PasswordChanged="PasswordBox_PasswordChanged" Height="34" VerticalAlignment="Top"/>
         <Label x:Name="UsernameLabel" Content="User :" HorizontalAlignment="Left" Margin="188,195,0,0" VerticalAlignment="Top" Foreground="#FF7DFFD8" FontSize="22" FontFamily="Bahnschrift"/>
         <Label x:Name="PasswordLabel" Content="Password :" HorizontalAlignment="Left" Margin="138,272,0,0" VerticalAlignment="Top" Foreground="#FF7DFFD8" FontSize="22" FontFamily="Bahnschrift"/>
         <Button Command="{Binding SignInCommand}" Content="Sign In" HorizontalAlignment="Left" Margin="294,354,0,0" VerticalAlignment="Top" FontSize="24" Height="41" Width="106" Background="#FF00FFB3" Foreground="White" FontFamily="Bahnschrift"/>
@@ -20,10 +20,10 @@
             <MenuItem Header="Account" Height="20" Background="Black" Foreground="#FF7DFFD8" FontFamily="Bahnschrift">
                 <MenuItem Header="Create Account" Foreground="Black"
                           Command="{Binding Path=OpenSignUpPageCommand}"/>
-                <MenuItem Header="Recover Password" Foreground="Black"/>
             </MenuItem>
             <MenuItem Header="Misc" Height="20" Background="Black" Foreground="#FF7DFFD8" FontFamily="Bahnschrift">
-                <MenuItem Header="About" Foreground="Black"/>
+                <MenuItem Header="About" Foreground="Black"
+                          Command="{Binding Path=AboutCommand}"/>
             </MenuItem>
         </Menu>
 
